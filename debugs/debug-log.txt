@@ -1,0 +1,47 @@
+=== Debug Pass 1 ===
+时间：2026-04-02
+执行方式：静态排查 + 代码修复
+Godot CLI：当前环境不可用（无法在终端直接运行项目）
+
+背景：
+- 项目此前未做过任何一次完整运行测试
+- 参考文档：debugs/README.md
+
+静态发现的问题：
+1. 5 个 autoload 相关脚本仍保留 class_name，存在 singleton hides 风险
+2. 多个脚本仍直接调用 FarmManager./GameManager./FarmInteractionSystem.，存在 non-static function 调用风险
+3. texture_generator.gd 依赖 ColorPalette 类型名；删除 class_name 后会继续报类型错误
+
+本轮修改：
+1. 删除以下脚本中的 class_name：
+   - scripts/systems/farm_manager.gd
+   - scripts/systems/farm_interaction_system.gd
+   - scripts/systems/farm_render_system.gd
+   - scripts/systems/game_manager.gd
+   - scripts/resources/color_palette.gd
+2. 将以下脚本中的单例调用改为 /root/... 实例访问：
+   - scripts/main.gd
+   - scripts/player/player_input_bridge.gd
+   - scripts/ui/interaction_prompt.gd
+   - scripts/plot/plot.gd
+   - scripts/systems/farm_render_system.gd
+3. 将单例缓存变量改为动态引用，避免 Node 静态类型导致的成员解析错误
+4. 调整 scripts/tools/texture_generator.gd，移除对 ColorPalette 类型名的强依赖
+5. 调整 resources/config/placeholder_colors.tres，移除 script_class=ColorPalette
+
+静态验证结果：
+1. 搜索 `class_name FarmManager|FarmInteractionSystem|FarmRenderSystem|GameManager|ColorPalette`：无结果
+2. 搜索 `FarmManager.` / `GameManager.` / `FarmInteractionSystem.` / `FarmRenderSystem.`：无结果
+3. 占位 PNG 数量：32
+
+当前结论：
+- P0 级静态阻塞项已完成修复
+- 仍未进行真实 Godot 启动验证
+- 下一步需要在 Godot 编辑器中运行 main.tscn，并把输出面板日志补充到本文件
+
+待补充的运行日志：
+- [ ] 项目首次启动输出
+- [ ] 是否出现 parse error / warning
+- [ ] 是否看到 [Main] Game started
+- [ ] 是否看到 [Main] Spawned 36 plots
+- [ ] 首个运行时错误及修复记录

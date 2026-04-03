@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://farm_manager_scene_0001"]
+
+[ext_resource type="Script" path="res://scripts/systems/farm_manager.gd" id="1_farm_manager"]
+
+[node name="FarmManager" type="Node"]
+script = ExtResource("1_farm_manager")

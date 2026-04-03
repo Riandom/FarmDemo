@@ -1,0 +1,90 @@
+[gd_scene load_steps=3 format=3 uid="uid://shop_ui_0001"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_ui.gd" id="1_shop_ui"]
+[ext_resource type="Resource" path="res://resources/config/ui/shop_config.tres" id="2_shop_config"]
+
+[node name="ShopUI" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shop_ui")
+shop_config = ExtResource("2_shop_config")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -175.0
+offset_right = 250.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "商店"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Panel/VBoxContainer/Header"]
+layout_mode = 2
+text = "×"
+
+[node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(460, 250)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="购买" type="VBoxContainer" parent="Panel/VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="BuyScroll" type="ScrollContainer" parent="Panel/VBoxContainer/TabContainer/购买"]
+custom_minimum_size = Vector2(440, 220)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BuyList" type="VBoxContainer" parent="Panel/VBoxContainer/TabContainer/购买/BuyScroll"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="售卖" type="VBoxContainer" parent="Panel/VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="SellScroll" type="ScrollContainer" parent="Panel/VBoxContainer/TabContainer/售卖"]
+custom_minimum_size = Vector2(440, 220)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SellList" type="VBoxContainer" parent="Panel/VBoxContainer/TabContainer/售卖/SellScroll"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="FeedbackLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "欢迎光临"
+horizontal_alignment = 1

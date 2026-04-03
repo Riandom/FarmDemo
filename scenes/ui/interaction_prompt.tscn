@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://interaction_prompt_ui_0001"]
+
+[ext_resource type="Script" path="res://scripts/ui/interaction_prompt.gd" id="1_interaction_prompt"]
+
+[node name="InteractionPrompt" type="PanelContainer"]
+visible = false
+offset_left = 310.0
+offset_top = 48.0
+offset_right = 490.0
+offset_bottom = 84.0
+custom_minimum_size = Vector2(180, 36)
+script = ExtResource("1_interaction_prompt")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "按 E 开垦"

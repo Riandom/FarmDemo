@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://gold_display_ui_0001"]
+
+[ext_resource type="Script" path="res://scripts/ui/gold_display.gd" id="1_gold_display"]
+
+[node name="GoldDisplay" type="PanelContainer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 128.0
+offset_bottom = 40.0
+script = ExtResource("1_gold_display")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "💰 50"

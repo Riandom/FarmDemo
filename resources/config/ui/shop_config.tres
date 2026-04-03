@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ShopConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/shop_config.gd" id="1_shop_config"]
+
+[resource]
+script = ExtResource("1_shop_config")
+buy_items = {
+"seed_wheat": {
+"display_name": "小麦种子",
+"icon": "res://assets/sprites/placeholder/items/seed_wheat.png",
+"price": 5
+},
+"hoe_wood": {
+"display_name": "木锄头",
+"icon": "res://assets/sprites/placeholder/items/hoe_wood.png",
+"price": 20
+},
+"watering_can_wood": {
+"display_name": "木水壶",
+"icon": "res://assets/sprites/placeholder/items/watering_can_wood.png",
+"price": 20
+},
+"sickle_wood": {
+"display_name": "木镰刀",
+"icon": "res://assets/sprites/placeholder/items/sickle_wood.png",
+"price": 20
+}
+}
+sell_items = {
+"crop_wheat": {
+"display_name": "小麦",
+"icon": "res://assets/sprites/placeholder/items/crop_wheat.png",
+"price": 15
+}
+}

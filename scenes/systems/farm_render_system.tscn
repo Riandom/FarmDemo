@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://farm_render_scene_0001"]
+
+[ext_resource type="Script" path="res://scripts/systems/farm_render_system.gd" id="1_farm_render"]
+
+[node name="FarmRenderSystem" type="Node"]
+script = ExtResource("1_farm_render")

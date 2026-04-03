@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/tool_config.gd" id="1_tool_config"]
+
+[resource]
+script = ExtResource("1_tool_config")
+tool_id = "hoe_wood"
+display_name = "木锄头"
+allowed_actions = Array[String](["plow"])
+energy_cost = 5
+icon_path = "res://assets/sprites/placeholder/items/hoe_wood.png"
