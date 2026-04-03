@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://ui_root_scene_0001"]
+[gd_scene load_steps=9 format=3 uid="uid://ui_root_scene_0001"]
 
 [ext_resource type="Script" path="res://scripts/ui/ui_root.gd" id="1_ui_root"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_prompt.tscn" id="2_interaction_prompt"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="3_inventory_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/shop_ui.tscn" id="4_shop_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gold_display.tscn" id="5_gold_display"]
+[ext_resource type="PackedScene" path="res://scenes/ui/time_display.tscn" id="6_time_display"]
+[ext_resource type="PackedScene" path="res://scenes/ui/solar_term_popup.tscn" id="7_solar_popup"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause_menu"]
 
 [node name="UIRoot" type="CanvasLayer"]
 script = ExtResource("1_ui_root")
@@ -16,3 +19,9 @@ script = ExtResource("1_ui_root")
 [node name="ShopUI" parent="." instance=ExtResource("4_shop_ui")]
 
 [node name="GoldDisplay" parent="." instance=ExtResource("5_gold_display")]
+
+[node name="TimeDisplay" parent="." instance=ExtResource("6_time_display")]
+
+[node name="SolarTermPopup" parent="." instance=ExtResource("7_solar_popup")]
+
+[node name="PauseMenuUI" parent="." instance=ExtResource("8_pause_menu")]

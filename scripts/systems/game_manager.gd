@@ -134,16 +134,40 @@ func get_unlocked_tools() -> PackedStringArray:
 	return unlocked_tools.duplicate()
 
 
-## 保存接口预留
-func save_game() -> bool:
-	push_warning("[GameManager] save_game not implemented in demo")
-	return false
+func export_save_data() -> Dictionary:
+	"""导出当前玩家经济和手持项状态。"""
+	return {
+		"gold": gold,
+		"inventory": inventory.duplicate(true),
+		"unlocked_tools": Array(unlocked_tools),
+		"current_tool": current_tool,
+	}
 
 
-## 读取接口预留
-func load_game() -> bool:
-	push_warning("[GameManager] load_game not implemented in demo")
-	return false
+func apply_save_data(data: Dictionary) -> void:
+	"""应用存档中的 GameManager 状态并广播刷新。"""
+	gold = max(int(data.get("gold", 50)), 0)
+
+	var saved_inventory = data.get("inventory", {})
+	if saved_inventory is Dictionary:
+		inventory = saved_inventory.duplicate(true)
+	else:
+		inventory = {}
+
+	var saved_unlocked_tools = data.get("unlocked_tools", unlocked_tools)
+	if saved_unlocked_tools is PackedStringArray:
+		unlocked_tools = saved_unlocked_tools.duplicate()
+	elif saved_unlocked_tools is Array:
+		unlocked_tools = PackedStringArray(saved_unlocked_tools)
+
+	current_tool = String(data.get("current_tool", "hoe_wood"))
+	if current_tool == "" or not unlocked_tools.has(current_tool):
+		current_tool = "hoe_wood"
+
+	emit_signal("gold_changed", gold)
+	emit_signal("inventory_changed", inventory.duplicate(true))
+	emit_signal("tool_equipped", current_tool)
+	emit_signal("game_loaded", export_save_data())
 
 
 func _initialize_default_data() -> void:

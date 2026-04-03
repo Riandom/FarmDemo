@@ -9,6 +9,7 @@ class_name PlayerInputBridge
 
 ## 当前锁定的目标地块
 var current_target_plot: Plot = null
+var current_target_interactable: Node = null
 
 ## 上次交互时间（秒）
 var last_interaction_time: float = -1.0
@@ -73,8 +74,13 @@ func _handle_interaction_input() -> void:
 	if is_interaction_on_cooldown():
 		return
 
-	current_target_plot = detect_interaction_target()
-	if current_target_plot == null:
+	current_target_interactable = detect_interaction_target()
+	current_target_plot = current_target_interactable as Plot
+	if current_target_interactable == null:
+		return
+
+	if _try_execute_generic_interaction(current_target_interactable):
+		last_interaction_time = _get_now_seconds()
 		return
 
 	if game_manager == null:
@@ -96,7 +102,11 @@ func _handle_interaction_input() -> void:
 
 
 ## 检测前方可交互地块
-func detect_interaction_target() -> Plot:
+func detect_interaction_target() -> Node:
+	var interactable := _detect_generic_interactable()
+	if interactable != null:
+		return interactable
+
 	if player == null or farm_manager == null:
 		return null
 
@@ -112,6 +122,10 @@ func detect_interaction_target() -> Plot:
 		return null
 
 	return target_plot
+
+
+func get_current_interaction_target() -> Node:
+	return detect_interaction_target()
 
 
 ## 根据当前手持项和地块状态推断动作
@@ -223,6 +237,21 @@ func show_tool_switch_feedback(tool_id: String) -> void:
 	show_interaction_feedback(true, "装备：%s" % display_name)
 
 
+func _try_execute_generic_interaction(target: Node) -> bool:
+	if target == null or target is Plot:
+		return false
+
+	if not target.has_method("interact"):
+		return false
+
+	var result = target.call("interact", player)
+	if result is Dictionary:
+		show_interaction_feedback(bool(result.get("success", false)), String(result.get("message", "")))
+	else:
+		show_interaction_feedback(true, "交互完成")
+	return true
+
+
 func _build_invalid_interaction_message(tool_id: String, plot: Plot) -> String:
 	match plot.base_state:
 		Plot.STATE_WASTE:
@@ -257,3 +286,40 @@ func _is_player_ui_locked() -> bool:
 
 func _get_now_seconds() -> float:
 	return float(Time.get_ticks_msec()) / 1000.0
+
+
+func _detect_generic_interactable() -> Node:
+	if player == null:
+		return null
+
+	var best_target: Node = null
+	var best_distance: float = interaction_range + 18.0
+	var player_pos: Vector2 = player.global_position
+	var facing_dir: Vector2 = player.get("facing_direction")
+
+	for node in get_tree().get_nodes_in_group("player_interactable"):
+		if node == null or not is_instance_valid(node):
+			continue
+		if not (node is Node2D):
+			continue
+		if node == player:
+			continue
+
+		var interactable_node: Node2D = node
+		var distance: float = player_pos.distance_to(interactable_node.global_position)
+		var allowed_distance: float = interaction_range + 18.0
+		if node.has_method("get_interaction_range"):
+			allowed_distance = max(float(node.call("get_interaction_range")), allowed_distance)
+
+		if distance > allowed_distance:
+			continue
+
+		var direction_to_target: Vector2 = (interactable_node.global_position - player_pos).normalized()
+		if facing_dir.dot(direction_to_target) < 0.1:
+			continue
+
+		if distance < best_distance:
+			best_distance = distance
+			best_target = node
+
+	return best_target

@@ -8,8 +8,8 @@ var _ui_root: UIRoot = null
 var _null_player_warning_timer: float = 0.0
 
 @onready var prompt_label: Label = $Label
-@onready var farm_manager = get_node_or_null("/root/FarmManager")
 @onready var game_manager = get_node_or_null("/root/GameManager")
+@onready var player_input_bridge: PlayerInputBridge = null
 
 
 func _ready() -> void:
@@ -29,6 +29,8 @@ func _process(delta: float) -> void:
 		return
 
 	_null_player_warning_timer = 0.0
+	if player_input_bridge == null and _player != null and _player.has_node("PlayerInputBridge"):
+		player_input_bridge = _player.get_node("PlayerInputBridge") as PlayerInputBridge
 
 	if _ui_root != null and _ui_root.is_any_modal_open():
 		hide_prompt()
@@ -62,6 +64,7 @@ func _process(delta: float) -> void:
 func set_player(player: Node) -> void:
 	_player = player
 	_null_player_warning_timer = 0.0
+	player_input_bridge = null
 
 
 ## 注入 UI 根节点引用
@@ -81,24 +84,16 @@ func hide_prompt() -> void:
 
 
 ## 更新提示框位置
-func update_position(player_pos: Vector2) -> void:
+func update_position(_player_pos: Vector2) -> void:
 	var viewport_size := get_viewport_rect().size
 	position = Vector2((viewport_size.x - size.x) * 0.5, 48.0)
 
 
-func _get_target_plot() -> Plot:
-	"""根据玩家朝向查询最近的前方地块。"""
-	if farm_manager == null:
-		farm_manager = get_node_or_null("/root/FarmManager")
-	if farm_manager == null:
-		return null
-
-	var player_position: Vector2 = _player.get("global_position")
-	var facing_direction: Vector2 = _player.get("facing_direction")
-	var interaction_range: float = float(_player.get("interaction_range"))
-	var target_position := player_position + (facing_direction * interaction_range)
-
-	return farm_manager.get_plot_at_world_position(target_position, 20.0)
+func _get_target_plot() -> Node:
+	"""优先复用 PlayerInputBridge 的目标检测，避免提示与实际交互目标不一致。"""
+	if player_input_bridge != null and player_input_bridge.has_method("get_current_interaction_target"):
+		return player_input_bridge.get_current_interaction_target()
+	return null
 
 
 func _apply_ui_theme() -> void:

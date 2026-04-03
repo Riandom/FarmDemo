@@ -163,8 +163,6 @@ func _try_interact() -> void:
 	# 发射交互信号给主控系统
 	emit_signal("player_interacted", interact_pos, facing_direction)
 
-	print("玩家交互：位置=", interact_pos, ", 朝向=", facing_direction)
-
 
 ## 请求打开 UI
 ## @param ui_type UI 类型

@@ -57,8 +57,7 @@ var base_state: String = STATE_WASTE
 func _ready() -> void:
 	"""初始化地块基础逻辑并注册到 FarmManager。"""
 	_validate_state()
-	_setup_grow_timer()
-	_connect_internal_signals()
+	_disable_legacy_grow_timer()
 	_register_to_farm_manager()
 	request_visual_refresh()
 
@@ -75,18 +74,11 @@ func _validate_state() -> void:
 		base_state = STATE_WASTE
 
 
-func _setup_grow_timer() -> void:
-	"""配置生长计时器，满足文档要求的 5 秒/阶段、重复触发、手动启动。"""
-	var crop_config: CropConfig = _load_crop_config()
-	grow_timer.wait_time = crop_config.stage_base_duration if crop_config != null else 5.0
-	grow_timer.one_shot = false
-	grow_timer.autostart = false
-
-
-func _connect_internal_signals() -> void:
-	"""连接地块内部需要的信号。"""
-	if not grow_timer.timeout.is_connected(_on_grow_timer_timeout):
-		grow_timer.timeout.connect(_on_grow_timer_timeout)
+func _disable_legacy_grow_timer() -> void:
+	"""Phase 2 起停用旧的秒级 Timer 生长逻辑，统一由 TimeManager 推进。"""
+	if grow_timer != null:
+		grow_timer.stop()
+		grow_timer.autostart = false
 
 
 func _register_to_farm_manager() -> void:
@@ -97,7 +89,7 @@ func _register_to_farm_manager() -> void:
 		farm_manager.register_plot(self)
 
 
-func can_perform_action(action_id: String, action_context: Dictionary = {}) -> bool:
+func can_perform_action(action_id: String, _action_context: Dictionary = {}) -> bool:
 	"""验证当前状态是否允许执行指定动作。"""
 	match action_id:
 		"plow":
@@ -212,17 +204,15 @@ func _execute_water() -> Dictionary:
 	"""执行浇水：首次浇水进入 watered 并启动生长，重复浇水只刷新进度。"""
 	if base_state == STATE_SEEDED:
 		_transition_to_state(STATE_WATERED)
-		_start_growing()
 		return _build_action_result(true, "已浇水，开始生长")
 
-	# 文档允许 seeded 和 watered 状态都可执行 water，这里对重复浇水做幂等处理。
+	# Phase 2 起作物生长交由 TimeManager 的每日卯时推进，这里保留重复浇水的幂等反馈。
 	return _build_action_result(true, "地块已保持湿润")
 
 
 func _execute_harvest() -> Dictionary:
 	"""执行收获：产出作物并回到 plowed，保留下一轮耕作状态。"""
 	var yield_amount: int = _get_crop_yield()
-	_stop_growing()
 	growth_stage = 0
 	growth_progress = 0.0
 	_transition_to_state(STATE_PLOWED)
@@ -235,37 +225,23 @@ func _execute_harvest() -> Dictionary:
 	)
 
 
-func _start_growing() -> void:
-	"""启动生长计时器，仅在进入 watered 后调用。"""
-	if grow_timer.is_stopped():
-		grow_timer.start()
-
-
-func _stop_growing() -> void:
-	"""停止生长计时器。"""
-	if not grow_timer.is_stopped():
-		grow_timer.stop()
-
-
-func _on_grow_timer_timeout() -> void:
-	"""按固定节拍推进生长阶段，并在成熟时切换状态。"""
+func advance_growth_by_day() -> bool:
+	"""由 TimeManager 在每日卯时调用，推进一次作物生长。"""
 	if base_state != STATE_WATERED:
-		return
+		return false
 
+	var total_stages: int = max(_get_growth_stage_count(), 1)
 	growth_stage += 1
-	var total_stages: int = _get_growth_stage_count()
-
-	if total_stages <= 0:
-		total_stages = 3
-
 	growth_progress = clamp(float(growth_stage) / float(total_stages), 0.0, 1.0)
 
 	if growth_stage >= total_stages:
-		_stop_growing()
+		growth_stage = total_stages
+		growth_progress = 1.0
 		_transition_to_state(STATE_MATURE)
-		return
+		return true
 
 	request_visual_refresh()
+	return true
 
 
 func _transition_to_state(new_state: String) -> void:
@@ -309,6 +285,28 @@ func _build_action_result(
 		"quality_factor": 1.0,
 		"side_effects": [],
 	}
+
+
+func export_save_data() -> Dictionary:
+	"""导出当前地块的最小存档结构。"""
+	return {
+		"grid_x": grid_position.x,
+		"grid_y": grid_position.y,
+		"base_state": base_state,
+		"growth_stage": growth_stage,
+		"growth_progress": growth_progress,
+		"crop_config_id": crop_config_id,
+	}
+
+
+func apply_save_data(data: Dictionary) -> void:
+	"""应用单个地块存档数据，并刷新可视状态。"""
+	base_state = String(data.get("base_state", STATE_WASTE))
+	_validate_state()
+	growth_stage = max(int(data.get("growth_stage", 0)), 0)
+	growth_progress = clamp(float(data.get("growth_progress", 0.0)), 0.0, 1.0)
+	crop_config_id = String(data.get("crop_config_id", crop_config_id))
+	request_visual_refresh()
 
 
 func _get_growth_stage_count() -> int:

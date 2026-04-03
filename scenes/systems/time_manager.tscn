@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/time_manager.gd" id="1_time_manager"]
+[ext_resource type="Resource" path="res://resources/config/time_config.tres" id="2_time_config"]
+
+[node name="TimeManager" type="Node"]
+script = ExtResource("1_time_manager")
+time_config = ExtResource("2_time_config")

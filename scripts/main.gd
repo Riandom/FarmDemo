@@ -6,6 +6,7 @@ class_name Main
 
 ## 地块父节点
 @onready var farm_tiles_parent: Node2D = $FarmTiles
+@onready var furniture_parent: Node2D = $Furniture
 
 ## UI 根节点
 @onready var ui_root: UIRoot = $UI
@@ -14,6 +15,7 @@ class_name Main
 
 ## 地块预制体
 @export var crop_plot_scene: PackedScene = preload("res://scenes/plot/crop_plot.tscn")
+@export var bed_scene: PackedScene = preload("res://scenes/furniture/bed.tscn")
 
 ## 农场行数
 @export var farm_rows: int = 6
@@ -29,6 +31,7 @@ class_name Main
 
 const _DEFAULT_FARM_OFFSET: Vector2 = Vector2(304.0, 204.0)
 const _DEFAULT_PLAYER_OFFSET: Vector2 = Vector2(96.0, 240.0)
+const _DEFAULT_BED_POSITION: Vector2 = Vector2(200.0, 400.0)
 
 
 func _ready() -> void:
@@ -40,14 +43,12 @@ func _initialize_scene() -> void:
 	"""初始化主场景、生成地块并连接系统。"""
 	_position_farm_and_player()
 	spawn_farm_tiles(farm_rows, farm_cols)
+	spawn_furniture()
 	ui_root.set_player(player)
 	if player.has_method("set_ui_open"):
 		player.set_ui_open(false)
 	player.z_index = 10
 	connect_all_signals()
-	print("[Main] Game started")
-	var plot_count: int = farm_manager.get_all_plots().size() if farm_manager != null else 0
-	print("[Main] Spawned %d plots" % plot_count)
 
 
 ## 生成农场地块网格
@@ -57,7 +58,7 @@ func spawn_farm_tiles(rows: int, cols: int) -> void:
 
 	for row in range(rows):
 		for col in range(cols):
-			var plot_instance := crop_plot_scene.instantiate()
+			var plot_instance: Plot = crop_plot_scene.instantiate() as Plot
 			if plot_instance == null:
 				continue
 
@@ -87,24 +88,23 @@ func connect_all_signals() -> void:
 
 ## 监听地块状态变更
 func _on_tile_state_changed(old_state: String, new_state: String) -> void:
-	print("[Main] Plot state changed: %s -> %s" % [old_state, new_state])
+	pass
 
 
 ## 监听作物收获事件
 func _on_crop_harvested(plot: Plot) -> void:
 	if game_manager != null:
 		game_manager.total_harvest_count += 1
-	print("[Main] Crop harvested at %s" % [plot.grid_position])
 
 
 ## UI 打开时的轻量回调
 func _on_ui_opened(ui_type: String) -> void:
-	print("[Main] UI opened: %s" % ui_type)
+	pass
 
 
 ## UI 关闭时的轻量回调
 func _on_ui_closed(ui_type: String) -> void:
-	print("[Main] UI closed: %s" % ui_type)
+	pass
 
 
 ## 接收玩家脚本的 UI 打开请求并转交给 UIRoot 统一处理
@@ -114,24 +114,42 @@ func _on_ui_interaction_requested(ui_type: String) -> void:
 			ui_root.toggle_inventory()
 		"shop":
 			ui_root.toggle_shop()
+		"pause_menu":
+			ui_root.toggle_pause_menu()
 		_:
-			print("[Main] Unknown UI request: %s" % ui_type)
+			push_warning("[Main] Unknown UI request: %s" % ui_type)
 
 
 ## 金币变化时的轻量回调
 func _on_gold_changed(new_amount: int) -> void:
-	print("[Main] Gold changed: %d" % new_amount)
+	pass
 
 
 ## 背包变化时的轻量回调
 func _on_inventory_updated(items: Dictionary) -> void:
-	print("[Main] Inventory updated: %s" % [items])
+	pass
 
 
 func _position_farm_and_player() -> void:
 	"""使用固定布局，避免运行早期视口尺寸未就绪导致出生点漂到左上角。"""
 	farm_offset = _DEFAULT_FARM_OFFSET
 	player.position = _DEFAULT_PLAYER_OFFSET
+
+
+func spawn_furniture() -> void:
+	for child in furniture_parent.get_children():
+		child.queue_free()
+
+	if bed_scene == null:
+		return
+
+	var bed: Node = bed_scene.instantiate()
+	if bed == null:
+		return
+
+	furniture_parent.add_child(bed)
+	if bed is Node2D:
+		bed.position = _DEFAULT_BED_POSITION
 
 
 func _connect_plot_signals(plot: Plot) -> void:
