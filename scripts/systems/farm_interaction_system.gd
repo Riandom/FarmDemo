@@ -2,6 +2,8 @@ extends Node
 
 var _tool_registry: Dictionary = {}
 
+@onready var config_manager = get_node_or_null("/root/ConfigManager")
+
 
 func _ready() -> void:
 	"""初始化默认工具配置，让交互系统具备最小可运行能力。"""
@@ -17,8 +19,8 @@ func register_tool_config(tool_config: ToolConfig) -> void:
 
 func get_tool_config(tool_id: String) -> ToolConfig:
 	"""根据工具 ID 获取对应配置。"""
-	var tool_config = _tool_registry.get(tool_id)
-	if tool_config is ToolConfig:
+	var tool_config: ToolConfig = _tool_registry.get(tool_id) as ToolConfig
+	if tool_config != null:
 		return tool_config
 	return null
 
@@ -75,6 +77,19 @@ func _build_failed_result(message: String) -> Dictionary:
 
 func _load_default_tool_configs() -> void:
 	"""加载本模块约定的默认工具配置资源。"""
+	_tool_registry.clear()
+
+	if config_manager == null:
+		config_manager = get_node_or_null("/root/ConfigManager")
+
+	if config_manager != null:
+		for tool_config in config_manager.get_all_tools():
+			register_tool_config(tool_config)
+
+	if not _tool_registry.is_empty():
+		_register_seed_item_config()
+		return
+
 	var paths: PackedStringArray = [
 		"res://resources/config/tools/hoe_wood.tres",
 		"res://resources/config/tools/watering_can_wood.tres",

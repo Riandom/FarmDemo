@@ -12,6 +12,15 @@
 [node name="UIRoot" type="CanvasLayer"]
 script = ExtResource("1_ui_root")
 
+[node name="SeasonTint" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0.08)
+
 [node name="InteractionPrompt" parent="." instance=ExtResource("2_interaction_prompt")]
 
 [node name="InventoryUI" parent="." instance=ExtResource("3_inventory_ui")]

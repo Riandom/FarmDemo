@@ -11,3 +11,4 @@ stage_base_duration = 5.0
 yield_base = 3
 sell_price_base = 15
 sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/wheat_stage_0.png", "res://assets/sprites/placeholder/crops/wheat_stage_1.png", "res://assets/sprites/placeholder/crops/wheat_stage_2.png", "res://assets/sprites/placeholder/crops/wheat_stage_3.png"])
+suitable_seasons = PackedStringArray("spring", "summer", "autumn")

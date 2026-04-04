@@ -21,3 +21,6 @@ class_name CropConfig
 
 ## 每个阶段对应的贴图路径列表
 @export var sprites_per_stage: Array[String] = []
+
+## 可播种的季节列表，供 TimeManager 和 Plot 做季节限制判断
+@export var suitable_seasons: PackedStringArray = PackedStringArray(["spring", "summer", "autumn"])

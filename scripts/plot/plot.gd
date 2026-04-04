@@ -52,6 +52,8 @@ var base_state: String = STATE_WASTE
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var grow_timer: Timer = $GrowTimer
 @onready var farm_manager = get_node_or_null("/root/FarmManager")
+@onready var config_manager = get_node_or_null("/root/ConfigManager")
+@onready var time_manager = get_node_or_null("/root/TimeManager")
 
 
 func _ready() -> void:
@@ -95,7 +97,7 @@ func can_perform_action(action_id: String, _action_context: Dictionary = {}) -> 
 		"plow":
 			return base_state == STATE_WASTE or base_state == STATE_PLOWED
 		"seed":
-			return base_state == STATE_PLOWED
+			return base_state == STATE_PLOWED and _is_crop_plantable_in_current_season()
 		"water":
 			return base_state == STATE_SEEDED or base_state == STATE_WATERED
 		"harvest":
@@ -140,6 +142,8 @@ func get_interaction_hint(current_tool_id: String = "") -> String:
 				return "按 E 开垦"
 			return "切换到木锄头开垦"
 		STATE_PLOWED:
+			if not _is_crop_plantable_in_current_season():
+				return "当前季节不适合播种%s" % _get_crop_display_name()
 			if current_tool_id == "" or current_tool_id == "seed_wheat":
 				return "按 E 播种"
 			return "切换到小麦种子播种"
@@ -227,12 +231,20 @@ func _execute_harvest() -> Dictionary:
 
 func advance_growth_by_day() -> bool:
 	"""由 TimeManager 在每日卯时调用，推进一次作物生长。"""
-	if base_state != STATE_WATERED:
+	return advance_growth(1.0)
+
+
+func advance_growth(units: float) -> bool:
+	"""按季节倍率推进作物生长，保留对未来天气/肥料系统的扩展空间。"""
+	if base_state != STATE_WATERED or units <= 0.0:
 		return false
 
 	var total_stages: int = max(_get_growth_stage_count(), 1)
-	growth_stage += 1
-	growth_progress = clamp(float(growth_stage) / float(total_stages), 0.0, 1.0)
+	growth_progress += units
+
+	while growth_progress >= 1.0 and growth_stage < total_stages:
+		growth_progress -= 1.0
+		growth_stage += 1
 
 	if growth_stage >= total_stages:
 		growth_stage = total_stages
@@ -260,6 +272,8 @@ func _build_invalid_action_message(action_id: String) -> String:
 		"seed":
 			if base_state == STATE_WASTE:
 				return "这块地还没开垦，无法播种"
+			if base_state == STATE_PLOWED and not _is_crop_plantable_in_current_season():
+				return "当前季节不适合播种%s" % _get_crop_display_name()
 			return "当前状态无法播种"
 		"water":
 			return "当前状态无法浇水"
@@ -327,14 +341,45 @@ func _get_crop_yield() -> int:
 
 func _load_crop_config() -> CropConfig:
 	"""从约定目录加载作物配置资源。"""
+	if config_manager == null:
+		config_manager = get_node_or_null("/root/ConfigManager")
+	if config_manager != null:
+		var configured_crop: CropConfig = config_manager.get_crop_config(crop_config_id)
+		if configured_crop != null:
+			return configured_crop
+
 	var candidate_paths: PackedStringArray = [
 		"res://resources/config/crops/wheat_config.tres",
 	]
 
 	for path in candidate_paths:
 		if ResourceLoader.exists(path):
-			var resource := load(path)
+			var resource: Resource = load(path)
 			if resource is CropConfig and resource.crop_id == crop_config_id:
 				return resource
 
 	return null
+
+
+func _is_crop_plantable_in_current_season() -> bool:
+	var crop_config: CropConfig = _load_crop_config()
+	if crop_config == null or crop_config.suitable_seasons.is_empty():
+		return true
+
+	var current_season: String = _get_current_season_id()
+	return crop_config.suitable_seasons.has(current_season)
+
+
+func _get_current_season_id() -> String:
+	if time_manager == null:
+		time_manager = get_node_or_null("/root/TimeManager")
+	if time_manager == null:
+		return "spring"
+	return String(time_manager.get("season"))
+
+
+func _get_crop_display_name() -> String:
+	var crop_config: CropConfig = _load_crop_config()
+	if crop_config != null and crop_config.display_name != "":
+		return crop_config.display_name
+	return "作物"

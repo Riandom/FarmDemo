@@ -5,6 +5,7 @@ const _PANEL_TEXTURE_PATH: String = "res://assets/sprites/placeholder/ui/panel_b
 
 @onready var date_label: Label = $VBoxContainer/DateLabel
 @onready var clock_label: Label = $VBoxContainer/ClockLabel
+@onready var year_label: Label = $VBoxContainer/YearLabel
 @onready var time_manager = get_node_or_null("/root/TimeManager")
 
 
@@ -26,6 +27,8 @@ func _connect_time_manager() -> void:
 		time_manager.day_changed.connect(_on_day_changed)
 	if not time_manager.solar_term_changed.is_connected(_on_solar_term_changed):
 		time_manager.solar_term_changed.connect(_on_solar_term_changed)
+	if not time_manager.season_changed.is_connected(_on_season_changed):
+		time_manager.season_changed.connect(_on_season_changed)
 
 	_refresh_display()
 
@@ -42,13 +45,19 @@ func _on_solar_term_changed(_solar_term_index: int) -> void:
 	_refresh_display()
 
 
+func _on_season_changed(_season_id: String, _year_count: int) -> void:
+	_refresh_display()
+
+
 func _refresh_display() -> void:
 	if time_manager == null:
+		year_label.text = "第 1 年"
 		date_label.text = "春季·立春 第 1 天"
 		clock_label.text = "卯时初刻"
 		return
 
-	date_label.text = time_manager.format_date_line()
+	year_label.text = time_manager.format_year_line()
+	date_label.text = time_manager.format_season_day_line()
 	clock_label.text = time_manager.format_clock_line()
 
 

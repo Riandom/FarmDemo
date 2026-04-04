@@ -49,7 +49,9 @@ func _get_crop_texture_path() -> String:
 		STATE_SEEDED:
 			return crop_config.sprites_per_stage[0]
 		STATE_WATERED:
-			var stage_index: int = clampi(growth_stage + 1, 1, crop_config.sprites_per_stage.size() - 1)
+			var intermediate_max_index: int = max(crop_config.sprites_per_stage.size() - 2, 1)
+			var normalized_growth: float = clampf((float(growth_stage) + growth_progress) / float(max(crop_config.growth_stages, 1)), 0.0, 0.999)
+			var stage_index: int = clampi(1 + int(floor(normalized_growth * float(intermediate_max_index))), 1, intermediate_max_index)
 			return crop_config.sprites_per_stage[stage_index]
 		STATE_MATURE:
 			return crop_config.sprites_per_stage[crop_config.sprites_per_stage.size() - 1]

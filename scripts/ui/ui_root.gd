@@ -10,6 +10,7 @@ var _modal_registry: Dictionary = {}
 var _current_modal_type: String = ""
 var _player: Node = null
 
+@onready var season_tint: ColorRect = $SeasonTint
 @onready var interaction_prompt: Control = $InteractionPrompt
 @onready var inventory_ui: Control = $InventoryUI
 @onready var shop_ui: Control = $ShopUI
@@ -17,6 +18,7 @@ var _player: Node = null
 @onready var time_display: Control = $TimeDisplay
 @onready var solar_term_popup: Control = $SolarTermPopup
 @onready var pause_menu_ui: Control = $PauseMenuUI
+@onready var time_manager = get_node_or_null("/root/TimeManager")
 
 
 func _ready() -> void:
@@ -26,6 +28,7 @@ func _ready() -> void:
 	register_modal_ui("pause_menu", pause_menu_ui)
 	_connect_ui_signals()
 	_bind_child_context()
+	call_deferred("_connect_time_manager")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -134,8 +137,8 @@ func is_any_modal_open() -> bool:
 
 
 func _get_modal(ui_type: String) -> Control:
-	var modal = _modal_registry.get(ui_type)
-	if modal is Control:
+	var modal: Control = _modal_registry.get(ui_type) as Control
+	if modal != null:
 		return modal
 	return null
 
@@ -177,6 +180,18 @@ func _bind_child_context() -> void:
 		pause_menu_ui.call("set_ui_root", self)
 
 
+func _connect_time_manager() -> void:
+	if time_manager == null:
+		time_manager = get_node_or_null("/root/TimeManager")
+	if time_manager == null:
+		return
+
+	if not time_manager.season_changed.is_connected(_on_season_changed):
+		time_manager.season_changed.connect(_on_season_changed)
+
+	_apply_current_season_tint()
+
+
 func _on_modal_ui_opened(ui_type: String) -> void:
 	"""更新当前模态状态并广播打开事件。"""
 	_current_modal_type = ui_type
@@ -212,3 +227,25 @@ func _sync_player_ui_state(is_open: bool) -> void:
 		_player.call("set_ui_open", is_open)
 	elif not is_open and _player.has_method("close_ui"):
 		_player.call("close_ui")
+
+
+func _on_season_changed(_season_id: String, _year_count: int) -> void:
+	_apply_current_season_tint(true)
+
+
+func _apply_current_season_tint(use_tween: bool = false) -> void:
+	if season_tint == null:
+		return
+
+	var target_color: Color = Color(1, 1, 1, 0.08)
+	if time_manager != null and time_manager.has_method("get_current_season_config"):
+		var season_config: SeasonConfig = time_manager.get_current_season_config()
+		if season_config != null:
+			target_color = season_config.background_color
+			target_color.a = 0.08
+
+	if use_tween:
+		var tween: Tween = create_tween()
+		tween.tween_property(season_tint, "color", target_color, 0.6)
+	else:
+		season_tint.color = target_color
