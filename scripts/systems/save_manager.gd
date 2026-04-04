@@ -5,7 +5,7 @@ signal save_completed(success: bool, file_path: String)
 signal load_started(save_type: String, slot_index: int)
 signal load_completed(success: bool, error_message: String)
 
-const SAVE_VERSION: String = "0.3.0"
+const SAVE_VERSION: String = "0.4.0"
 const SAVE_DIR: String = "user://"
 const AUTO_SAVE_FILE: String = "user://save_auto.json"
 const MANUAL_SAVE_FILES: PackedStringArray = [
@@ -19,6 +19,8 @@ const MANUAL_SAVE_FILES: PackedStringArray = [
 @onready var game_manager = get_node_or_null("/root/GameManager")
 @onready var time_manager = get_node_or_null("/root/TimeManager")
 @onready var farm_manager = get_node_or_null("/root/FarmManager")
+@onready var event_manager = get_node_or_null("/root/EventManager")
+@onready var effect_manager = get_node_or_null("/root/EffectManager")
 
 
 func save_game_auto() -> void:
@@ -159,7 +161,7 @@ func _load_from_path(file_path: String) -> void:
 	if version == "":
 		emit_signal("load_completed", false, "存档缺少版本信息")
 		return
-	if not version.begins_with("0.2") and not version.begins_with("0.3"):
+	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4"):
 		emit_signal("load_completed", false, "存档版本不兼容")
 		return
 
@@ -171,6 +173,7 @@ func _load_from_path(file_path: String) -> void:
 	var player_data = game_state.get("player", {})
 	var time_data = game_state.get("time", {})
 	var farm_data = game_state.get("farm", {})
+	var effects_data = game_state.get("effects", {})
 	if not (player_data is Dictionary):
 		emit_signal("load_completed", false, "存档缺少玩家数据")
 		return
@@ -188,7 +191,9 @@ func _load_from_path(file_path: String) -> void:
 
 	_apply_player_state(player_data)
 	_apply_time_state(time_data)
+	_apply_effect_state(effects_data)
 	_apply_farm_state(farm_data)
+	_publish_save_loaded(file_path)
 	emit_signal("load_completed", true, "")
 
 
@@ -213,6 +218,7 @@ func _build_save_data() -> Dictionary:
 		"game_state": {
 			"player": player_data,
 			"time": time_manager.export_save_data(),
+			"effects": _build_effect_data(),
 			"farm": {
 				"plots": farm_plots,
 			},
@@ -240,6 +246,18 @@ func _apply_time_state(time_data: Variant) -> void:
 		return
 
 	time_manager.apply_save_data(time_data)
+
+
+func _apply_effect_state(effects_data: Variant) -> void:
+	if effect_manager == null:
+		effect_manager = get_node_or_null("/root/EffectManager")
+	if effect_manager == null or not effect_manager.has_method("apply_save_data"):
+		return
+
+	if effects_data is Dictionary:
+		effect_manager.call("apply_save_data", effects_data)
+	else:
+		effect_manager.call("apply_save_data", {})
 
 
 func _apply_farm_state(farm_data: Variant) -> void:
@@ -296,3 +314,25 @@ func _get_player_node() -> Node2D:
 
 func _make_plot_key(grid_x: int, grid_y: int) -> String:
 	return "%d,%d" % [grid_x, grid_y]
+
+
+func _build_effect_data() -> Dictionary:
+	if effect_manager == null:
+		effect_manager = get_node_or_null("/root/EffectManager")
+	if effect_manager == null or not effect_manager.has_method("export_save_data"):
+		return {}
+	return effect_manager.call("export_save_data") as Dictionary
+
+
+func _publish_save_loaded(file_path: String) -> void:
+	if event_manager == null:
+		event_manager = get_node_or_null("/root/EventManager")
+	if event_manager == null or not event_manager.has_method("publish"):
+		return
+
+	var slot_type: String = "auto" if file_path == AUTO_SAVE_FILE else "manual"
+	var slot_index: int = MANUAL_SAVE_FILES.find(file_path)
+	event_manager.call("publish", "save_loaded", {
+		"slot_type": slot_type,
+		"slot_index": slot_index,
+	})

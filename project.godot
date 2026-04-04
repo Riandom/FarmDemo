@@ -18,9 +18,11 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 
 FarmManager="*res://scenes/systems/farm_manager.tscn"
 ConfigManager="*res://scenes/systems/config_manager.tscn"
+EventManager="*res://scenes/systems/event_manager.tscn"
 FarmInteractionSystem="*res://scenes/systems/farm_interaction_system.tscn"
 FarmRenderSystem="*res://scenes/systems/farm_render_system.tscn"
 GameManager="*res://scenes/systems/game_manager.tscn"
+EffectManager="*res://scenes/systems/effect_manager.tscn"
 TimeManager="*res://scenes/systems/time_manager.tscn"
 SaveManager="*res://scenes/systems/save_manager.tscn"
 

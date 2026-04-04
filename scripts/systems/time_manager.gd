@@ -41,6 +41,8 @@ var _time_paused: bool = false
 
 @onready var farm_manager = get_node_or_null("/root/FarmManager")
 @onready var config_manager = get_node_or_null("/root/ConfigManager")
+@onready var event_manager = get_node_or_null("/root/EventManager")
+@onready var effect_manager = get_node_or_null("/root/EffectManager")
 
 
 func _ready() -> void:
@@ -96,6 +98,7 @@ func advance_shi_chen() -> void:
 func advance_day() -> void:
 	_advance_day_state()
 	emit_signal("day_changed", day_in_term)
+	_publish_day_started()
 	emit_signal("time_changed", shi_chen, ke)
 	_check_daily_growth_trigger()
 
@@ -107,6 +110,7 @@ func skip_to_next_day_mao_hour() -> void:
 	_ke_elapsed_seconds = 0.0
 
 	emit_signal("day_changed", day_in_term)
+	_publish_day_started()
 	emit_signal("time_changed", shi_chen, ke)
 	_check_daily_growth_trigger()
 
@@ -139,9 +143,30 @@ func trigger_crop_growth() -> void:
 
 func get_current_growth_multiplier() -> float:
 	_refresh_runtime_configs()
+	var growth_multiplier: float = 1.0
 	if current_season_config != null:
-		return max(current_season_config.growth_rate_multiplier, 0.0)
-	return 1.0
+		growth_multiplier = max(current_season_config.growth_rate_multiplier, 0.0)
+
+	if effect_manager == null:
+		effect_manager = get_node_or_null("/root/EffectManager")
+	if effect_manager == null:
+		return growth_multiplier
+
+	if effect_manager.has_method("has_effect"):
+		var winter_block_active: bool = bool(effect_manager.call("has_effect", "WINTER_OUTDOOR_GROWTH_BLOCK"))
+		if winter_block_active:
+			return 0.0
+
+	if effect_manager.has_method("get_effect_value"):
+		var summer_boost: float = float(effect_manager.call("get_effect_value", "SUMMER_GROWTH_BOOST"))
+		if summer_boost > 0.0:
+			growth_multiplier = 1.0 + summer_boost
+
+		var temp_growth_boost: float = float(effect_manager.call("get_effect_value", "TEMP_GROWTH_BOOST"))
+		if temp_growth_boost != 0.0:
+			growth_multiplier *= (1.0 + temp_growth_boost)
+
+	return max(growth_multiplier, 0.0)
 
 
 func get_current_season_config() -> SeasonConfig:
@@ -247,6 +272,7 @@ func _switch_to_next_season() -> void:
 		emit_signal("season_changed", season, year_count)
 		return
 
+	var old_season: String = season
 	var current_index: int = seasons_order.find(season)
 	if current_index == -1:
 		current_index = -1
@@ -258,6 +284,7 @@ func _switch_to_next_season() -> void:
 		year_count += 1
 
 	_refresh_runtime_configs()
+	_publish_season_changed(old_season, season)
 	emit_signal("season_changed", season, year_count)
 
 
@@ -272,6 +299,35 @@ func _emit_current_time_state() -> void:
 	emit_signal("solar_term_changed", solar_term_index)
 	emit_signal("day_changed", day_in_term)
 	emit_signal("time_changed", shi_chen, ke)
+
+
+func _publish_day_started() -> void:
+	if event_manager == null:
+		event_manager = get_node_or_null("/root/EventManager")
+	if event_manager == null or not event_manager.has_method("publish"):
+		return
+
+	event_manager.call("publish", "day_started", {
+		"season": season,
+		"year_count": year_count,
+		"solar_term": _get_solar_term_id(season, solar_term_index),
+		"day_in_term": day_in_term,
+	})
+
+
+func _publish_season_changed(old_season: String, new_season: String) -> void:
+	if event_manager == null:
+		event_manager = get_node_or_null("/root/EventManager")
+	if event_manager == null or not event_manager.has_method("publish"):
+		return
+
+	event_manager.call("publish", "season_changed", {
+		"old_season": old_season,
+		"new_season": new_season,
+		"year_count": year_count,
+		"solar_term": _get_solar_term_id(new_season, solar_term_index),
+		"day_in_term": day_in_term,
+	})
 
 
 func _refresh_runtime_configs() -> void:
@@ -377,3 +433,7 @@ func _get_solar_term_name(season_id: String, term_index: int) -> String:
 	if not season_terms.is_empty():
 		return String(season_terms[term_index % season_terms.size()])
 	return "未知节气"
+
+
+func _get_solar_term_id(season_id: String, term_index: int) -> String:
+	return _get_solar_term_name(season_id, term_index)
