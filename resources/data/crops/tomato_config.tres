@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_tomato"
+display_name = "番茄"
+seed_item_id = "seed_tomato"
+harvest_item_id = "crop_tomato"
+growth_stages = 3
+stage_base_duration = 5.0
+yield_base = 3
+seed_price = 6
+sell_price = 18
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/tomato_stage_0.png", "res://assets/sprites/placeholder/crops/tomato_stage_1.png", "res://assets/sprites/placeholder/crops/tomato_stage_2.png", "res://assets/sprites/placeholder/crops/tomato_stage_3.png"])
+suitable_seasons = PackedStringArray("summer")
+description = "夏季稳定主力作物，收益平衡且易于规划。"

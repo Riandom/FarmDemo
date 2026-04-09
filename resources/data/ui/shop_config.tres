@@ -1,0 +1,175 @@
+[gd_resource type="Resource" script_class="ShopConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/shop_config.gd" id="1_shop_config"]
+
+[resource]
+script = ExtResource("1_shop_config")
+buy_items = {
+"seed_wheat": {
+"display_name": "小麦种子",
+"icon": "res://assets/sprites/placeholder/items/seed_wheat.png",
+"price": 5
+},
+"seed_turnip": {
+"display_name": "萝卜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_turnip.png",
+"price": 4
+},
+"seed_cabbage": {
+"display_name": "卷心菜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_cabbage.png",
+"price": 9
+},
+"seed_strawberry": {
+"display_name": "草莓种子",
+"icon": "res://assets/sprites/placeholder/items/seed_strawberry.png",
+"price": 10
+},
+"seed_pea": {
+"display_name": "豌豆种子",
+"icon": "res://assets/sprites/placeholder/items/seed_pea.png",
+"price": 6
+},
+"seed_tomato": {
+"display_name": "番茄种子",
+"icon": "res://assets/sprites/placeholder/items/seed_tomato.png",
+"price": 6
+},
+"seed_corn": {
+"display_name": "玉米种子",
+"icon": "res://assets/sprites/placeholder/items/seed_corn.png",
+"price": 9
+},
+"seed_pepper": {
+"display_name": "辣椒种子",
+"icon": "res://assets/sprites/placeholder/items/seed_pepper.png",
+"price": 4
+},
+"seed_watermelon": {
+"display_name": "西瓜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_watermelon.png",
+"price": 12
+},
+"seed_cucumber": {
+"display_name": "黄瓜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_cucumber.png",
+"price": 6
+},
+"seed_pumpkin": {
+"display_name": "南瓜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_pumpkin.png",
+"price": 10
+},
+"seed_sweet_potato": {
+"display_name": "红薯种子",
+"icon": "res://assets/sprites/placeholder/items/seed_sweet_potato.png",
+"price": 6
+},
+"seed_eggplant": {
+"display_name": "茄子种子",
+"icon": "res://assets/sprites/placeholder/items/seed_eggplant.png",
+"price": 7
+},
+"seed_carrot": {
+"display_name": "胡萝卜种子",
+"icon": "res://assets/sprites/placeholder/items/seed_carrot.png",
+"price": 4
+},
+"seed_rice": {
+"display_name": "稻谷种子",
+"icon": "res://assets/sprites/placeholder/items/seed_rice.png",
+"price": 8
+},
+"hoe_wood": {
+"display_name": "木锄头",
+"icon": "res://assets/sprites/placeholder/items/hoe_wood.png",
+"price": 20
+},
+"watering_can_wood": {
+"display_name": "木水壶",
+"icon": "res://assets/sprites/placeholder/items/watering_can_wood.png",
+"price": 20
+},
+"sickle_wood": {
+"display_name": "木镰刀",
+"icon": "res://assets/sprites/placeholder/items/sickle_wood.png",
+"price": 20
+}
+}
+sell_items = {
+"crop_wheat": {
+"display_name": "小麦",
+"icon": "res://assets/sprites/placeholder/items/crop_wheat.png",
+"price": 15
+},
+"crop_turnip": {
+"display_name": "萝卜",
+"icon": "res://assets/sprites/placeholder/items/crop_turnip.png",
+"price": 8
+},
+"crop_cabbage": {
+"display_name": "卷心菜",
+"icon": "res://assets/sprites/placeholder/items/crop_cabbage.png",
+"price": 28
+},
+"crop_strawberry": {
+"display_name": "草莓",
+"icon": "res://assets/sprites/placeholder/items/crop_strawberry.png",
+"price": 24
+},
+"crop_pea": {
+"display_name": "豌豆",
+"icon": "res://assets/sprites/placeholder/items/crop_pea.png",
+"price": 18
+},
+"crop_tomato": {
+"display_name": "番茄",
+"icon": "res://assets/sprites/placeholder/items/crop_tomato.png",
+"price": 18
+},
+"crop_corn": {
+"display_name": "玉米",
+"icon": "res://assets/sprites/placeholder/items/crop_corn.png",
+"price": 26
+},
+"crop_pepper": {
+"display_name": "辣椒",
+"icon": "res://assets/sprites/placeholder/items/crop_pepper.png",
+"price": 10
+},
+"crop_watermelon": {
+"display_name": "西瓜",
+"icon": "res://assets/sprites/placeholder/items/crop_watermelon.png",
+"price": 40
+},
+"crop_cucumber": {
+"display_name": "黄瓜",
+"icon": "res://assets/sprites/placeholder/items/crop_cucumber.png",
+"price": 16
+},
+"crop_pumpkin": {
+"display_name": "南瓜",
+"icon": "res://assets/sprites/placeholder/items/crop_pumpkin.png",
+"price": 30
+},
+"crop_sweet_potato": {
+"display_name": "红薯",
+"icon": "res://assets/sprites/placeholder/items/crop_sweet_potato.png",
+"price": 19
+},
+"crop_eggplant": {
+"display_name": "茄子",
+"icon": "res://assets/sprites/placeholder/items/crop_eggplant.png",
+"price": 20
+},
+"crop_carrot": {
+"display_name": "胡萝卜",
+"icon": "res://assets/sprites/placeholder/items/crop_carrot.png",
+"price": 9
+},
+"crop_rice": {
+"display_name": "稻谷",
+"icon": "res://assets/sprites/placeholder/items/crop_rice.png",
+"price": 24
+}
+}

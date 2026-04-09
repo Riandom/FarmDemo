@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_cabbage"
+display_name = "卷心菜"
+seed_item_id = "seed_cabbage"
+harvest_item_id = "crop_cabbage"
+growth_stages = 4
+stage_base_duration = 6.5
+yield_base = 2
+seed_price = 9
+sell_price = 28
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/cabbage_stage_0.png", "res://assets/sprites/placeholder/crops/cabbage_stage_1.png", "res://assets/sprites/placeholder/crops/cabbage_stage_2.png", "res://assets/sprites/placeholder/crops/cabbage_stage_3.png"])
+suitable_seasons = PackedStringArray("spring")
+description = "春季高收益长周期作物，占地更久但回报更高。"

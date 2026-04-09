@@ -53,7 +53,7 @@ ERROR: Cannot call non-static function "on_tool_use()" on the class "FarmInterac
 2. `res://scripts/systems/farm_interaction_system.gd`
 3. `res://scripts/systems/farm_render_system.gd`
 4. `res://scripts/systems/game_manager.gd`
-5. `res://scripts/resources/color_palette.gd`
+5. `res://scripts/data/color_palette.gd`
 
 **修改规则**：
 ```gdscript
@@ -110,7 +110,7 @@ func some_function():
 
 #### 2.2 需要修改的文件清单
 
-**文件 1**: `res://scripts/player/player_input_bridge.gd`
+**文件 1**: `res://scripts/actors/player/player_input_bridge.gd`
 
 **需要修复的行号**（共 11 处）：
 - 第 77 行：`GameManager.get_current_tool()`
@@ -163,8 +163,8 @@ var current_item := get_node("/root/GameManager").get_current_tool()
 
 请在以下文件中搜索是否还有其他单例直接调用：
 - `res://scripts/ui/*.gd`
-- `res://scripts/plot/*.gd`
-- `res://scripts/main.gd`
+- `res://scripts/world/farm/*.gd`
+- `res://scripts/app/main.gd`
 
 **搜索关键词**：
 - `GameManager.`

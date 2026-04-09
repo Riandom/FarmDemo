@@ -43,11 +43,12 @@ var _time_paused: bool = false
 @onready var config_manager = get_node_or_null("/root/ConfigManager")
 @onready var event_manager = get_node_or_null("/root/EventManager")
 @onready var effect_manager = get_node_or_null("/root/EffectManager")
+@onready var game_manager = get_node_or_null("/root/GameManager")
 
 
 func _ready() -> void:
-	if time_config == null and ResourceLoader.exists("res://resources/config/time_config.tres"):
-		time_config = load("res://resources/config/time_config.tres") as TimeConfig
+	if time_config == null and ResourceLoader.exists("res://resources/data/time_config.tres"):
+		time_config = load("res://resources/data/time_config.tres") as TimeConfig
 
 	_refresh_runtime_configs()
 	call_deferred("_emit_current_time_state")
@@ -99,6 +100,7 @@ func advance_day() -> void:
 	_advance_day_state()
 	emit_signal("day_changed", day_in_term)
 	_publish_day_started()
+	_restore_player_stamina()
 	emit_signal("time_changed", shi_chen, ke)
 	_check_daily_growth_trigger()
 
@@ -111,6 +113,7 @@ func skip_to_next_day_mao_hour() -> void:
 
 	emit_signal("day_changed", day_in_term)
 	_publish_day_started()
+	_restore_player_stamina()
 	emit_signal("time_changed", shi_chen, ke)
 	_check_daily_growth_trigger()
 
@@ -282,7 +285,6 @@ func _switch_to_next_season() -> void:
 	season = String(seasons_order[next_index])
 	if did_wrap_year:
 		year_count += 1
-
 	_refresh_runtime_configs()
 	_publish_season_changed(old_season, season)
 	emit_signal("season_changed", season, year_count)
@@ -328,6 +330,15 @@ func _publish_season_changed(old_season: String, new_season: String) -> void:
 		"solar_term": _get_solar_term_id(new_season, solar_term_index),
 		"day_in_term": day_in_term,
 	})
+
+
+func _restore_player_stamina() -> void:
+	if game_manager == null:
+		game_manager = get_node_or_null("/root/GameManager")
+	if game_manager == null or not game_manager.has_method("restore_stamina"):
+		return
+
+	game_manager.call("restore_stamina")
 
 
 func _refresh_runtime_configs() -> void:

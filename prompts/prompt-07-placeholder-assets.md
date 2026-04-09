@@ -157,7 +157,7 @@ extends Node
 class_name TextureGenerator
 
 const OUTPUT_DIR = "res://assets/sprites/placeholder/"
-const PALETTE_PATH = "res://resources/config/placeholder_colors.tres"
+const PALETTE_PATH = "res://resources/data/placeholder_colors.tres"
 
 var palette: ColorPalette
 

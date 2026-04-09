@@ -25,3 +25,9 @@
 5. 收获：成熟后进行收获获得作物/收益
 6. 售卖：在商店中将作物兑换为金币
 
+## 当前开发文档
+
+- `docs/guides/current-to-full-game-roadmap.md`：从当前 Demo 到完整独立游戏的开发路线图
+- `docs/phase4-event-effect-system.md`：当前基础设施阶段说明
+- `docs/phase5-farming-economy-system.md`：下一阶段种田经营深化总纲
+

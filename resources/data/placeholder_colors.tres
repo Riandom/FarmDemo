@@ -1,0 +1,29 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/color_palette.gd" id="1_color_palette"]
+
+[resource]
+script = ExtResource("1_color_palette")
+player_primary = Color(0.298039, 0.54902, 0.960784, 1)
+player_accent = Color(0.94902, 0.819608, 0.419608, 1)
+player_outline = Color(0.121569, 0.176471, 0.239216, 1)
+tile_waste = Color(0.356863, 0.356863, 0.356863, 1)
+tile_plowed = Color(0.545098, 0.352941, 0.168627, 1)
+tile_seeded = Color(0.65098, 0.423529, 0.239216, 1)
+tile_watered = Color(0.431373, 0.290196, 0.180392, 1)
+tile_mature = Color(0.698039, 0.505882, 0.203922, 1)
+crop_stage_0 = Color(0.423529, 0.619608, 0.164706, 1)
+crop_stage_1 = Color(0.498039, 0.709804, 0.239216, 1)
+crop_stage_2 = Color(0.717647, 0.784314, 0.290196, 1)
+crop_stage_3 = Color(0.894118, 0.780392, 0.352941, 1)
+item_seed_wheat = Color(0.552941, 0.745098, 0.270588, 1)
+item_crop_wheat = Color(0.905882, 0.772549, 0.34902, 1)
+item_hoe_wood = Color(0.545098, 0.352941, 0.168627, 1)
+item_watering_can_wood = Color(0.345098, 0.6, 0.839216, 1)
+item_sickle_wood = Color(0.835294, 0.847059, 0.862745, 1)
+ui_panel_background = Color(0.129412, 0.109804, 0.0784314, 0.941176)
+ui_panel_border = Color(0.847059, 0.776471, 0.631373, 1)
+ui_button_normal = Color(0.419608, 0.309804, 0.164706, 1)
+ui_button_hover = Color(0.541176, 0.407843, 0.219608, 1)
+ui_button_pressed = Color(0.294118, 0.207843, 0.109804, 1)
+ui_text = Color(1, 0.956863, 0.866667, 1)

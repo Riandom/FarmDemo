@@ -23,7 +23,7 @@
 ```ini
 [application]
 config/name="Farm Demo"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/app/main.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
 [display]

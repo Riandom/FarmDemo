@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_watermelon"
+display_name = "西瓜"
+seed_item_id = "seed_watermelon"
+harvest_item_id = "crop_watermelon"
+growth_stages = 4
+stage_base_duration = 7.0
+yield_base = 1
+seed_price = 12
+sell_price = 40
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/watermelon_stage_0.png", "res://assets/sprites/placeholder/crops/watermelon_stage_1.png", "res://assets/sprites/placeholder/crops/watermelon_stage_2.png", "res://assets/sprites/placeholder/crops/watermelon_stage_3.png"])
+suitable_seasons = PackedStringArray("summer")
+description = "夏季代表性高利润作物，产量少但单价极高。"

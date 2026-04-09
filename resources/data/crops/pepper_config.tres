@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_pepper"
+display_name = "辣椒"
+seed_item_id = "seed_pepper"
+harvest_item_id = "crop_pepper"
+growth_stages = 2
+stage_base_duration = 3.5
+yield_base = 2
+seed_price = 4
+sell_price = 10
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/pepper_stage_0.png", "res://assets/sprites/placeholder/crops/pepper_stage_1.png", "res://assets/sprites/placeholder/crops/pepper_stage_2.png", "res://assets/sprites/placeholder/crops/pepper_stage_3.png"])
+suitable_seasons = PackedStringArray("summer")
+description = "夏季快周转作物，利润不高但回本快。"

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_carrot"
+display_name = "胡萝卜"
+seed_item_id = "seed_carrot"
+harvest_item_id = "crop_carrot"
+growth_stages = 2
+stage_base_duration = 3.0
+yield_base = 2
+seed_price = 4
+sell_price = 9
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/carrot_stage_0.png", "res://assets/sprites/placeholder/crops/carrot_stage_1.png", "res://assets/sprites/placeholder/crops/carrot_stage_2.png", "res://assets/sprites/placeholder/crops/carrot_stage_3.png"])
+suitable_seasons = PackedStringArray("autumn")
+description = "秋季快周转作物，适合补现金流和补订单。"

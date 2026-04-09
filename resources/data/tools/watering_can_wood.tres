@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/tool_config.gd" id="1_tool_config"]
+
+[resource]
+script = ExtResource("1_tool_config")
+tool_id = "watering_can_wood"
+display_name = "木水壶"
+allowed_actions = Array[String](["water"])
+energy_cost = 8
+icon_path = "res://assets/sprites/placeholder/items/watering_can_wood.png"

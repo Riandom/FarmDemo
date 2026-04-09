@@ -11,6 +11,7 @@ var _ui_root: UIRoot = null
 @onready var resume_button: Button = $Panel/VBoxContainer/Actions/ResumeButton
 @onready var save_button: Button = $Panel/VBoxContainer/Actions/SaveButton
 @onready var load_button: Button = $Panel/VBoxContainer/Actions/LoadButton
+@onready var quit_button: Button = $Panel/VBoxContainer/Actions/QuitButton
 @onready var close_button: Button = $Panel/VBoxContainer/Header/CloseButton
 @onready var save_load_ui: SaveLoadUI = $SaveLoadUI
 @onready var time_manager = get_node_or_null("/root/TimeManager")
@@ -24,6 +25,7 @@ func _ready() -> void:
 	resume_button.pressed.connect(_on_resume_button_pressed)
 	save_button.pressed.connect(_on_save_button_pressed)
 	load_button.pressed.connect(_on_load_button_pressed)
+	quit_button.pressed.connect(_on_quit_button_pressed)
 	close_button.pressed.connect(_on_close_button_pressed)
 
 
@@ -80,6 +82,11 @@ func _on_load_button_pressed() -> void:
 
 func _on_close_button_pressed() -> void:
 	request_close()
+
+
+func _on_quit_button_pressed() -> void:
+	_set_time_paused(false)
+	get_tree().quit()
 
 
 func _on_save_load_back_requested() -> void:

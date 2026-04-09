@@ -325,9 +325,9 @@ current_tool = "hoe_wood"
 ```gdscript
 # Main._ready() 中加载
 var tool_paths = [
-    "res://resources/config/tools/hoe_wood.tres",
-    "res://resources/config/tools/watering_can_wood.tres",
-    "res://resources/config/tools/sickle_wood.tres"
+    "res://resources/data/tools/hoe_wood.tres",
+    "res://resources/data/tools/watering_can_wood.tres",
+    "res://resources/data/tools/sickle_wood.tres"
 ]
 
 for path in tool_paths:
@@ -340,7 +340,7 @@ for path in tool_paths:
 
 ```gdscript
 # 加载小麦配置供收获时使用
-var wheat_config = load("res://resources/config/crops/wheat_config.tres") as CropConfig
+var wheat_config = load("res://resources/data/crops/wheat_config.tres") as CropConfig
 ```
 
 ---

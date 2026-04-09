@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/interactables/bed_interactive.gd" id="1_bed"]
+[ext_resource type="Texture2D" path="res://assets/sprites/placeholder/ui/panel_background.png" id="2_bed_texture"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bed"]
+radius = 26.0
+
+[node name="Bed" type="Area2D"]
+script = ExtResource("1_bed")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_bed_texture")
+scale = Vector2(0.5, 0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bed")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="FadeOverlay" type="ColorRect" parent="CanvasLayer"]
+visible = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

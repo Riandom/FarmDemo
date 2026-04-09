@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CropConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_config.gd" id="1_crop_config"]
+
+[resource]
+script = ExtResource("1_crop_config")
+crop_id = "crop_cucumber"
+display_name = "黄瓜"
+seed_item_id = "seed_cucumber"
+harvest_item_id = "crop_cucumber"
+growth_stages = 3
+stage_base_duration = 4.5
+yield_base = 2
+seed_price = 6
+sell_price = 16
+sprites_per_stage = Array[String](["res://assets/sprites/placeholder/crops/cucumber_stage_0.png", "res://assets/sprites/placeholder/crops/cucumber_stage_1.png", "res://assets/sprites/placeholder/crops/cucumber_stage_2.png", "res://assets/sprites/placeholder/crops/cucumber_stage_3.png"])
+suitable_seasons = PackedStringArray("summer")
+description = "夏季稳健作物，收益略高于中庸型基础作物。"

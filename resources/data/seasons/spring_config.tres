@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SeasonConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/season_config.gd" id="1_season_config"]
+
+[resource]
+script = ExtResource("1_season_config")
+season_id = "spring"
+display_name = "春季"
+solar_terms = PackedStringArray("立春", "雨水", "惊蛰", "春分", "清明", "谷雨")
+growth_rate_multiplier = 1.0
+background_color = Color(0.8, 1, 0.8, 1)
+season_summary = "作物生长速度正常"

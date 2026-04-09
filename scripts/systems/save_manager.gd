@@ -5,7 +5,7 @@ signal save_completed(success: bool, file_path: String)
 signal load_started(save_type: String, slot_index: int)
 signal load_completed(success: bool, error_message: String)
 
-const SAVE_VERSION: String = "0.4.0"
+const SAVE_VERSION: String = "0.6.0"
 const SAVE_DIR: String = "user://"
 const AUTO_SAVE_FILE: String = "user://save_auto.json"
 const MANUAL_SAVE_FILES: PackedStringArray = [
@@ -161,7 +161,7 @@ func _load_from_path(file_path: String) -> void:
 	if version == "":
 		emit_signal("load_completed", false, "存档缺少版本信息")
 		return
-	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4"):
+	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4") and not version.begins_with("0.5") and not version.begins_with("0.6"):
 		emit_signal("load_completed", false, "存档版本不兼容")
 		return
 
