@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/npc/npc_actor.gd" id="1_npc"]
+
+[node name="NpcCrafter" type="Node2D"]
+script = ExtResource("1_npc")
+npc_id = "npc_crafter"
+display_name = "铁匠顾"
+liked_items = PackedStringArray("ore_fragment", "cave_essence")
+disliked_items = PackedStringArray("crop_strawberry", "crop_turnip")
+default_first_dialogue = "木柄、铁片、铆钉，少一样都不行。好工具是攒出来的。"
+default_repeat_dialogue = "我在看料子，你先四处转转。"
+morning_first_dialogue = "上午适合开炉，铁料还没烧透之前最讲究手感。"
+morning_repeat_dialogue = "今天的火候刚上来，别催。"
+afternoon_first_dialogue = "下午正好敲打零件。等你以后带回材料，我们再谈升级。"
+afternoon_repeat_dialogue = "想把工具做好，先学会带对材料。"
+evening_first_dialogue = "晚上我一般不再开炉，只做些收尾活。"
+evening_repeat_dialogue = "火快灭了，明天再说。"
+morning_anchor_id = "crafter"
+afternoon_anchor_id = "workshop"
+evening_anchor_id = "crafter"
+evening_visible = false
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.48, 0.5, 0.56, 1)
+polygon = PackedVector2Array(-14, -24, 14, -24, 14, 24, -14, 24)
+
+[node name="Apron" type="Polygon2D" parent="."]
+color = Color(0.22, 0.2, 0.18, 1)
+polygon = PackedVector2Array(-10, -4, 10, -4, 10, 20, -10, 20)

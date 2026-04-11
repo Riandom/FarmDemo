@@ -5,7 +5,7 @@ signal save_completed(success: bool, file_path: String)
 signal load_started(save_type: String, slot_index: int)
 signal load_completed(success: bool, error_message: String)
 
-const SAVE_VERSION: String = "0.7.0"
+const SAVE_VERSION: String = "0.8.2"
 const SAVE_DIR: String = "user://"
 const AUTO_SAVE_FILE: String = "user://save_auto.json"
 const MANUAL_SAVE_FILES: PackedStringArray = [
@@ -162,7 +162,7 @@ func _load_from_path(file_path: String) -> void:
 	if version == "":
 		emit_signal("load_completed", false, "存档缺少版本信息")
 		return
-	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4") and not version.begins_with("0.5") and not version.begins_with("0.6") and not version.begins_with("0.7"):
+	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4") and not version.begins_with("0.5") and not version.begins_with("0.6") and not version.begins_with("0.7") and not version.begins_with("0.8"):
 		emit_signal("load_completed", false, "存档版本不兼容")
 		return
 
@@ -225,6 +225,7 @@ func _build_save_data() -> Dictionary:
 			"orders": _build_order_data(),
 			"farm": {
 				"plots": farm_plots,
+				"storage_chests": _build_storage_chest_data(),
 			},
 		},
 	}
@@ -276,6 +277,17 @@ func _apply_farm_state(farm_data: Variant) -> void:
 		if plot.has_method("apply_save_data"):
 			plot.call("apply_save_data", {})
 
+	var chests_by_id: Dictionary = {}
+	for chest_node in _get_storage_chests():
+		if chest_node == null or not is_instance_valid(chest_node):
+			continue
+		var chest_id: String = String(chest_node.get("chest_id"))
+		if chest_id == "":
+			continue
+		chests_by_id[chest_id] = chest_node
+		if chest_node.has_method("apply_save_data"):
+			chest_node.call("apply_save_data", {})
+
 	if not (farm_data is Dictionary):
 		return
 
@@ -291,6 +303,22 @@ func _apply_farm_state(farm_data: Variant) -> void:
 		var plot = plots_by_key.get(key)
 		if plot != null and is_instance_valid(plot) and plot.has_method("apply_save_data"):
 			plot.call("apply_save_data", plot_data)
+
+	var chest_list = farm_data.get("storage_chests", [])
+	if not (chest_list is Array):
+		return
+
+	for chest_data in chest_list:
+		if not (chest_data is Dictionary):
+			continue
+
+		var chest_id: String = String(chest_data.get("chest_id", ""))
+		if chest_id == "":
+			continue
+
+		var chest_node = chests_by_id.get(chest_id)
+		if chest_node != null and is_instance_valid(chest_node) and chest_node.has_method("apply_save_data"):
+			chest_node.call("apply_save_data", chest_data)
 
 
 func _build_save_label(file_path: String, time_data: Variant) -> String:
@@ -336,6 +364,18 @@ func _build_order_data() -> Dictionary:
 	return order_manager.call("export_save_data") as Dictionary
 
 
+func _build_storage_chest_data() -> Array[Dictionary]:
+	var chest_data_list: Array[Dictionary] = []
+	for chest_node in _get_storage_chests():
+		if chest_node == null or not is_instance_valid(chest_node):
+			continue
+		if chest_node.has_method("export_save_data"):
+			var chest_data = chest_node.call("export_save_data")
+			if chest_data is Dictionary:
+				chest_data_list.append(chest_data)
+	return chest_data_list
+
+
 func _apply_order_state(order_data: Variant) -> void:
 	if order_manager == null:
 		order_manager = get_node_or_null("/root/OrderManager")
@@ -360,3 +400,7 @@ func _publish_save_loaded(file_path: String) -> void:
 		"slot_type": slot_type,
 		"slot_index": slot_index,
 	})
+
+
+func _get_storage_chests() -> Array:
+	return get_tree().get_nodes_in_group("storage_chest")

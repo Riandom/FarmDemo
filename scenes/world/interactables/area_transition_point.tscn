@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/interactables/area_transition_point.gd" id="1_area_transition"]
+
+[sub_resource type="RectangleShape2D" id="1_shape"]
+size = Vector2(40, 40)
+
+[sub_resource type="RectangleShape2D" id="2_visual_rect"]
+size = Vector2(34, 34)
+
+[node name="AreaTransitionPoint" type="Area2D"]
+script = ExtResource("1_area_transition")
+
+[node name="Portal" type="Polygon2D" parent="."]
+color = Color(0.68, 0.8, 0.44, 1)
+polygon = PackedVector2Array(-18, -18, 18, -18, 18, 18, -18, 18)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1_shape")

@@ -13,9 +13,11 @@ var _player: Node = null
 @onready var season_tint: ColorRect = $SeasonTint
 @onready var interaction_prompt: Control = $InteractionPrompt
 @onready var inventory_ui: Control = $InventoryUI
+@onready var storage_chest_ui: Control = $StorageChestUI
 @onready var shop_ui: Control = $ShopUI
 @onready var combat_vendor_ui: Control = $CombatVendorUI
 @onready var order_ui: Control = $OrderBoardUI
+@onready var dialogue_ui: Control = $DialogueUI
 @onready var gold_display: Control = $GoldDisplay
 @onready var combat_health_display: Control = $CombatHealthDisplay
 @onready var time_display: Control = $TimeDisplay
@@ -27,9 +29,11 @@ var _player: Node = null
 func _ready() -> void:
 	"""初始化 UI 注册表并连接子组件信号。"""
 	register_modal_ui("inventory", inventory_ui)
+	register_modal_ui("storage_chest", storage_chest_ui)
 	register_modal_ui("shop", shop_ui)
 	register_modal_ui("combat_vendor", combat_vendor_ui)
 	register_modal_ui("orders", order_ui)
+	register_modal_ui("dialogue", dialogue_ui)
 	register_modal_ui("pause_menu", pause_menu_ui)
 	_connect_ui_signals()
 	_bind_child_context()
@@ -126,6 +130,22 @@ func toggle_inventory() -> void:
 	open_modal("inventory")
 
 
+func open_storage_chest(chest: StorageChest) -> void:
+	if storage_chest_ui == null:
+		return
+	if storage_chest_ui.has_method("set_chest"):
+		storage_chest_ui.call("set_chest", chest)
+	open_modal("storage_chest")
+
+
+func open_dialogue(dialogue_data: Dictionary) -> void:
+	if dialogue_ui == null:
+		return
+	if dialogue_ui.has_method("set_dialogue_data"):
+		dialogue_ui.call("set_dialogue_data", dialogue_data)
+	open_modal("dialogue")
+
+
 ## 切换商店界面
 func toggle_shop() -> void:
 	if _current_modal_type == "shop":
@@ -172,6 +192,11 @@ func _connect_ui_signals() -> void:
 	if inventory_ui.has_signal("inventory_updated") and not inventory_ui.is_connected("inventory_updated", Callable(self, "_on_inventory_updated")):
 		inventory_ui.connect("inventory_updated", Callable(self, "_on_inventory_updated"))
 
+	if storage_chest_ui.has_signal("ui_opened") and not storage_chest_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
+		storage_chest_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
+	if storage_chest_ui.has_signal("ui_closed") and not storage_chest_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
+		storage_chest_ui.connect("ui_closed", Callable(self, "_on_modal_ui_closed"))
+
 	if shop_ui.has_signal("ui_opened") and not shop_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
 		shop_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
 	if shop_ui.has_signal("ui_closed") and not shop_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
@@ -191,6 +216,15 @@ func _connect_ui_signals() -> void:
 	if order_ui.has_signal("ui_closed") and not order_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
 		order_ui.connect("ui_closed", Callable(self, "_on_modal_ui_closed"))
 
+	if dialogue_ui.has_signal("ui_opened") and not dialogue_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
+		dialogue_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
+	if dialogue_ui.has_signal("ui_closed") and not dialogue_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
+		dialogue_ui.connect("ui_closed", Callable(self, "_on_modal_ui_closed"))
+	if dialogue_ui.has_signal("service_requested") and not dialogue_ui.is_connected("service_requested", Callable(self, "_on_dialogue_service_requested")):
+		dialogue_ui.connect("service_requested", Callable(self, "_on_dialogue_service_requested"))
+	if dialogue_ui.has_signal("gift_requested") and not dialogue_ui.is_connected("gift_requested", Callable(self, "_on_dialogue_gift_requested")):
+		dialogue_ui.connect("gift_requested", Callable(self, "_on_dialogue_gift_requested"))
+
 	if pause_menu_ui.has_signal("ui_opened") and not pause_menu_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
 		pause_menu_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
 	if pause_menu_ui.has_signal("ui_closed") and not pause_menu_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
@@ -205,6 +239,9 @@ func _bind_child_context() -> void:
 	if inventory_ui != null and inventory_ui.has_method("set_ui_root"):
 		inventory_ui.call("set_ui_root", self)
 
+	if storage_chest_ui != null and storage_chest_ui.has_method("set_ui_root"):
+		storage_chest_ui.call("set_ui_root", self)
+
 	if shop_ui != null and shop_ui.has_method("set_ui_root"):
 		shop_ui.call("set_ui_root", self)
 
@@ -213,6 +250,9 @@ func _bind_child_context() -> void:
 
 	if order_ui != null and order_ui.has_method("set_ui_root"):
 		order_ui.call("set_ui_root", self)
+
+	if dialogue_ui != null and dialogue_ui.has_method("set_ui_root"):
+		dialogue_ui.call("set_ui_root", self)
 
 	if pause_menu_ui != null and pause_menu_ui.has_method("set_ui_root"):
 		pause_menu_ui.call("set_ui_root", self)
@@ -254,6 +294,24 @@ func _on_inventory_updated(items: Dictionary) -> void:
 func _on_shop_transaction_completed(item_id: String, is_buy: bool, amount: int) -> void:
 	"""转发商店交易完成事件。"""
 	emit_signal("shop_transaction_completed", item_id, is_buy, amount)
+
+
+func _on_dialogue_service_requested(service_modal_type: String) -> void:
+	close_modal("dialogue")
+	if service_modal_type == "":
+		return
+	open_modal(service_modal_type)
+
+
+func _on_dialogue_gift_requested(npc_id: String) -> void:
+	var current_scene := get_tree().current_scene
+	if current_scene == null or not current_scene.has_method("request_npc_gift"):
+		return
+	var result = current_scene.call("request_npc_gift", npc_id)
+	if result is Dictionary and dialogue_ui != null and dialogue_ui.has_method("set_dialogue_data"):
+		var dialogue_data: Dictionary = result.duplicate(true)
+		dialogue_data["gift_enabled"] = true
+		dialogue_ui.call("set_dialogue_data", dialogue_data)
 
 
 func _sync_player_ui_state(is_open: bool) -> void:

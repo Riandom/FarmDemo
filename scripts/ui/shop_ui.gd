@@ -9,6 +9,7 @@ const _FILTER_ALL: String = "all"
 const _FILTER_TOOL: String = "tool"
 const _FILTER_SEED: String = "seed"
 const _FILTER_CROP: String = "crop"
+const _FILTER_MATERIAL: String = "material"
 const _UI_PANEL_TEXTURE_PATH: String = "res://assets/sprites/placeholder/ui/panel_background.png"
 const _UI_BUTTON_NORMAL_TEXTURE_PATH: String = "res://assets/sprites/placeholder/ui/button_normal.png"
 const _UI_BUTTON_HOVER_TEXTURE_PATH: String = "res://assets/sprites/placeholder/ui/button_hover.png"
@@ -38,10 +39,12 @@ var _sort_entries: Dictionary = {}
 @onready var buy_tool_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/ToolButton
 @onready var buy_seed_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/SeedButton
 @onready var buy_crop_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/CropButton
+@onready var buy_material_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/MaterialButton
 @onready var sell_all_button: Button = $Panel/VBoxContainer/Content/SellColumn/SellFilterBar/AllButton
 @onready var sell_tool_button: Button = $Panel/VBoxContainer/Content/SellColumn/SellFilterBar/ToolButton
 @onready var sell_seed_button: Button = $Panel/VBoxContainer/Content/SellColumn/SellFilterBar/SeedButton
 @onready var sell_crop_button: Button = $Panel/VBoxContainer/Content/SellColumn/SellFilterBar/CropButton
+@onready var sell_material_button: Button = $Panel/VBoxContainer/Content/SellColumn/SellFilterBar/MaterialButton
 @onready var buy_grid: GridContainer = $Panel/VBoxContainer/Content/BuyColumn/BuyScroll/BuyGrid
 @onready var sell_grid: GridContainer = $Panel/VBoxContainer/Content/SellColumn/SellScroll/SellGrid
 @onready var feedback_label: Label = $Panel/VBoxContainer/FeedbackLabel
@@ -168,11 +171,11 @@ func _connect_buttons() -> void:
 	if not close_button.pressed.is_connected(_on_close_button_pressed):
 		close_button.pressed.connect(_on_close_button_pressed)
 
-	for button in [buy_all_button, buy_tool_button, buy_seed_button, buy_crop_button]:
+	for button in [buy_all_button, buy_tool_button, buy_seed_button, buy_crop_button, buy_material_button]:
 		if not button.pressed.is_connected(_on_buy_filter_pressed.bind(String(button.name))):
 			button.pressed.connect(_on_buy_filter_pressed.bind(String(button.name)))
 
-	for button in [sell_all_button, sell_tool_button, sell_seed_button, sell_crop_button]:
+	for button in [sell_all_button, sell_tool_button, sell_seed_button, sell_crop_button, sell_material_button]:
 		if not button.pressed.is_connected(_on_sell_filter_pressed.bind(String(button.name))):
 			button.pressed.connect(_on_sell_filter_pressed.bind(String(button.name)))
 
@@ -322,8 +325,10 @@ func _get_category_priority(category_id: String) -> int:
 			return 1
 		"crop":
 			return 2
-		_:
+		"material":
 			return 3
+		_:
+			return 4
 
 
 func _clear_container(container: Container) -> void:
@@ -365,6 +370,8 @@ func _resolve_filter_from_button_name(button_name: String) -> String:
 			return _FILTER_SEED
 		"CropButton":
 			return _FILTER_CROP
+		"MaterialButton":
+			return _FILTER_MATERIAL
 		_:
 			return _FILTER_ALL
 
@@ -382,8 +389,8 @@ func _apply_ui_theme() -> void:
 	_apply_button_theme(close_button)
 
 	for button in [
-		buy_all_button, buy_tool_button, buy_seed_button, buy_crop_button,
-		sell_all_button, sell_tool_button, sell_seed_button, sell_crop_button,
+		buy_all_button, buy_tool_button, buy_seed_button, buy_crop_button, buy_material_button,
+		sell_all_button, sell_tool_button, sell_seed_button, sell_crop_button, sell_material_button,
 	]:
 		_apply_button_theme(button)
 
@@ -393,10 +400,12 @@ func _apply_filter_button_state() -> void:
 	_style_filter_button(buy_tool_button, _buy_filter == _FILTER_TOOL)
 	_style_filter_button(buy_seed_button, _buy_filter == _FILTER_SEED)
 	_style_filter_button(buy_crop_button, _buy_filter == _FILTER_CROP)
+	_style_filter_button(buy_material_button, _buy_filter == _FILTER_MATERIAL)
 	_style_filter_button(sell_all_button, _sell_filter == _FILTER_ALL)
 	_style_filter_button(sell_tool_button, _sell_filter == _FILTER_TOOL)
 	_style_filter_button(sell_seed_button, _sell_filter == _FILTER_SEED)
 	_style_filter_button(sell_crop_button, _sell_filter == _FILTER_CROP)
+	_style_filter_button(sell_material_button, _sell_filter == _FILTER_MATERIAL)
 
 
 func _style_filter_button(button: Button, is_active: bool) -> void:

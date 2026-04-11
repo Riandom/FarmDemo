@@ -15,6 +15,10 @@ crop_plot_scene = ExtResource("4_crop_plot")
 
 [node name="Furniture" type="Node2D" parent="."]
 
+[node name="HouseRoot" type="Node2D" parent="."]
+
+[node name="TownRoot" type="Node2D" parent="."]
+
 [node name="ExploreRoot" type="Node2D" parent="."]
 
 [node name="UI" parent="." instance=ExtResource("3_ui_root")]

@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/npc/npc_actor.gd" id="1_npc"]
+
+[node name="NpcGeneralStore" type="Node2D"]
+script = ExtResource("1_npc")
+npc_id = "npc_general_store"
+display_name = "沈老板"
+service_modal_type = "shop"
+service_label = "看看杂货"
+liked_items = PackedStringArray("crop_wheat", "crop_turnip", "crop_tomato", "crop_pumpkin")
+disliked_items = PackedStringArray("ore_fragment", "cave_essence")
+default_first_dialogue = "今年的种子卖得不错。要是你手里宽裕，记得多备一些季节作物。"
+default_repeat_dialogue = "想买东西就直说，镇上的人都赶时间。"
+morning_first_dialogue = "一早开门，货还算齐。今天想种什么？"
+morning_repeat_dialogue = "早上的货最好挑，别等到天晚。"
+afternoon_first_dialogue = "下午人最多，我得盯着货架。你有需要就看看。"
+afternoon_repeat_dialogue = "要买要卖都快点，后面还有人等着。"
+evening_first_dialogue = "天色晚了，我差不多该收摊了。"
+evening_repeat_dialogue = "今天就聊到这吧，明早再来。"
+morning_anchor_id = "merchant"
+afternoon_anchor_id = "general_store"
+evening_anchor_id = "merchant"
+evening_visible = false
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.82, 0.63, 0.31, 1)
+polygon = PackedVector2Array(-14, -24, 14, -24, 14, 24, -14, 24)
+
+[node name="Apron" type="Polygon2D" parent="."]
+color = Color(0.36, 0.22, 0.1, 1)
+polygon = PackedVector2Array(-10, -2, 10, -2, 10, 20, -10, 20)

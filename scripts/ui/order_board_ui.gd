@@ -161,6 +161,14 @@ func _build_order_card(order_data: Dictionary) -> Control:
 	reward_label.text = "奖励：%d 金" % int(order_data.get("reward_gold", 0))
 	text_column.add_child(reward_label)
 
+	var publisher_npc_id: String = String(order_data.get("publisher_npc_id", ""))
+	if publisher_npc_id != "":
+		var publisher_label := Label.new()
+		var publisher_name: String = _format_publisher_name(publisher_npc_id)
+		var affinity_reward: int = int(order_data.get("affinity_reward", 0))
+		publisher_label.text = "发布者：%s    关系奖励：+%d" % [publisher_name, affinity_reward]
+		text_column.add_child(publisher_label)
+
 	var submit_button := Button.new()
 	submit_button.custom_minimum_size = Vector2(140, 48)
 	submit_button.text = "提交订单"
@@ -201,6 +209,13 @@ func _format_item_name(item_id: String) -> String:
 	if config_manager != null and config_manager.has_method("get_item_display_name"):
 		return String(config_manager.call("get_item_display_name", item_id))
 	return item_id
+
+
+func _format_publisher_name(npc_id: String) -> String:
+	var runtime_order_manager := _get_order_manager()
+	if runtime_order_manager != null and runtime_order_manager.has_method("get_npc_display_name"):
+		return String(runtime_order_manager.call("get_npc_display_name", npc_id))
+	return npc_id
 
 
 func _on_submit_order_pressed(order_id: String) -> void:

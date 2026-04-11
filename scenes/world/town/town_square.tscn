@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/town/town_square.gd" id="1_town"]
+[ext_resource type="PackedScene" path="res://scenes/world/interactables/return_transition_point.tscn" id="2_return_point"]
+
+[node name="TownSquare" type="Node2D"]
+script = ExtResource("1_town")
+visible = false
+
+[node name="Ground" type="Polygon2D" parent="."]
+color = Color(0.42, 0.58, 0.43, 1)
+polygon = PackedVector2Array(220, 120, 1080, 120, 1080, 620, 220, 620)
+
+[node name="Road" type="Polygon2D" parent="."]
+color = Color(0.66, 0.59, 0.45, 1)
+polygon = PackedVector2Array(560, 140, 720, 140, 720, 620, 560, 620)
+
+[node name="GeneralStorePlaceholder" type="Polygon2D" parent="."]
+color = Color(0.58, 0.42, 0.28, 1)
+polygon = PackedVector2Array(270, 176, 470, 176, 470, 340, 270, 340)
+
+[node name="GeneralStoreDoor" type="Polygon2D" parent="."]
+color = Color(0.23, 0.16, 0.1, 1)
+polygon = PackedVector2Array(352, 288, 392, 288, 392, 340, 352, 340)
+
+[node name="WorkshopPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.44, 0.36, 0.34, 1)
+polygon = PackedVector2Array(810, 176, 1010, 176, 1010, 340, 810, 340)
+
+[node name="WorkshopDoor" type="Polygon2D" parent="."]
+color = Color(0.18, 0.12, 0.09, 1)
+polygon = PackedVector2Array(892, 288, 932, 288, 932, 340, 892, 340)
+
+[node name="BoardPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.63, 0.51, 0.29, 1)
+polygon = PackedVector2Array(600, 370, 680, 370, 680, 442, 600, 442)
+
+[node name="NpcLayer" type="Node2D" parent="."]
+
+[node name="MerchantNpcPoint" type="Marker2D" parent="."]
+position = Vector2(370, 384)
+
+[node name="CrafterNpcPoint" type="Marker2D" parent="."]
+position = Vector2(908, 388)
+
+[node name="ResidentNpcPoint" type="Marker2D" parent="."]
+position = Vector2(640, 310)
+
+[node name="GeneralStoreEntrancePoint" type="Marker2D" parent="."]
+position = Vector2(372, 352)
+
+[node name="WorkshopEntrancePoint" type="Marker2D" parent="."]
+position = Vector2(912, 352)
+
+[node name="RequestBoardPoint" type="Marker2D" parent="."]
+position = Vector2(640, 452)
+
+[node name="ExitToFarm" parent="." instance=ExtResource("2_return_point")]
+position = Vector2(640, 600)
+prompt_text = "返回农场"
+required_area_id = "town"
+entry_point_id = "farm_from_town"
+success_message = "你回到了农场"
+failure_message = "现在无法离开镇子"

@@ -26,6 +26,7 @@ EffectManager="*res://scenes/systems/effect_manager.tscn"
 TimeManager="*res://scenes/systems/time_manager.tscn"
 SaveManager="*res://scenes/systems/save_manager.tscn"
 OrderManager="*res://scenes/systems/order_manager.tscn"
+WorldAreaManager="*res://scenes/systems/world_area_manager.tscn"
 
 [display]
 

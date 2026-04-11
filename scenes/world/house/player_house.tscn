@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/house/player_house.gd" id="1_house"]
+[ext_resource type="PackedScene" path="res://scenes/world/interactables/return_transition_point.tscn" id="2_return_point"]
+[ext_resource type="PackedScene" path="res://scenes/world/interactables/bed.tscn" id="3_bed"]
+[ext_resource type="PackedScene" path="res://scenes/world/interactables/storage_chest.tscn" id="4_chest"]
+
+[node name="PlayerHouse" type="Node2D"]
+script = ExtResource("1_house")
+visible = false
+
+[node name="Floor" type="Polygon2D" parent="."]
+color = Color(0.47, 0.39, 0.3, 1)
+polygon = PackedVector2Array(420, 160, 860, 160, 860, 560, 420, 560)
+
+[node name="WallInner" type="Polygon2D" parent="."]
+color = Color(0.72, 0.64, 0.47, 1)
+polygon = PackedVector2Array(452, 192, 828, 192, 828, 528, 452, 528)
+
+[node name="DoorRug" type="Polygon2D" parent="."]
+color = Color(0.56, 0.22, 0.16, 1)
+polygon = PackedVector2Array(584, 494, 696, 494, 696, 544, 584, 544)
+
+[node name="Window" type="Polygon2D" parent="."]
+color = Color(0.61, 0.83, 0.88, 1)
+polygon = PackedVector2Array(522, 214, 598, 214, 598, 252, 522, 252)
+
+[node name="BedAnchor" type="Marker2D" parent="."]
+position = Vector2(528, 418)
+
+[node name="StorageAnchor" type="Marker2D" parent="."]
+position = Vector2(740, 430)
+
+[node name="FutureUtilityAnchor" type="Marker2D" parent="."]
+position = Vector2(742, 262)
+
+[node name="Bed" parent="." instance=ExtResource("3_bed")]
+position = Vector2(528, 418)
+bed_label = "睡觉休息"
+required_area_id = "house"
+
+[node name="StorageChest" parent="." instance=ExtResource("4_chest")]
+position = Vector2(740, 430)
+chest_id = "farm_chest_01"
+chest_label = "屋内储物箱"
+required_area_id = "house"
+
+[node name="ExitToFarm" parent="." instance=ExtResource("2_return_point")]
+position = Vector2(640, 540)
+prompt_text = "离开小屋"
+required_area_id = "house"
+entry_point_id = "farm_from_house"
+success_message = "你回到了农场"
+failure_message = "现在无法离开小屋"

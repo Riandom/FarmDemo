@@ -71,9 +71,9 @@ func refresh_daily_orders(force: bool = false) -> void:
 	var high_reward_ratio: float = 0.46 + 0.03 * float(day_seed % 3)
 
 	daily_orders = [
-		_build_order(low_crop, low_required_count, low_reward_ratio, "基础订单"),
-		_build_order(mid_crop, mid_required_count, mid_reward_ratio, "常规订单"),
-		_build_order(high_crop, high_required_count, high_reward_ratio, "收益订单"),
+		_build_order(low_crop, low_required_count, low_reward_ratio, "基础订单", day_seed),
+		_build_order(mid_crop, mid_required_count, mid_reward_ratio, "常规订单", day_seed),
+		_build_order(high_crop, high_required_count, high_reward_ratio, "收益订单", day_seed),
 	]
 	last_refresh_day_key = current_day_key
 	completed_order_ids = PackedStringArray()
@@ -132,12 +132,24 @@ func submit_order(order_id: String) -> Dictionary:
 		for reward_item_id in reward_items.keys():
 			game_manager.call("add_item", String(reward_item_id), int(reward_items[reward_item_id]))
 
+	var publisher_npc_id: String = String(order.get("publisher_npc_id", ""))
+	var affinity_reward: int = int(order.get("affinity_reward", 0))
+	if publisher_npc_id != "" and affinity_reward != 0 and game_manager.has_method("add_npc_affinity"):
+		game_manager.call("add_npc_affinity", publisher_npc_id, affinity_reward)
+
 	order["status"] = ORDER_STATUS_COMPLETED
 	daily_orders[order_index] = order
 	if not completed_order_ids.has(order_id):
 		completed_order_ids.append(order_id)
 
-	var result: Dictionary = _build_submit_result(true, "订单完成", reward_gold, reward_items if reward_items is Dictionary else {})
+	var result: Dictionary = _build_submit_result(
+		true,
+		_build_order_completion_message(publisher_npc_id, affinity_reward),
+		reward_gold,
+		reward_items if reward_items is Dictionary else {},
+		publisher_npc_id,
+		affinity_reward
+	)
 	emit_signal("orders_changed", get_orders())
 	emit_signal("order_submitted", result)
 	return result
@@ -250,10 +262,12 @@ func _sort_crop_by_sell_price(a: CropConfig, b: CropConfig) -> bool:
 	return a.display_name < b.display_name
 
 
-func _build_order(crop: CropConfig, required_count: int, reward_bonus_ratio: float, prefix: String) -> Dictionary:
+func _build_order(crop: CropConfig, required_count: int, reward_bonus_ratio: float, prefix: String, day_seed: int) -> Dictionary:
 	var order_sale_total: int = crop.sell_price * required_count
 	var reward_gold: int = order_sale_total + max(int(ceil(order_sale_total * reward_bonus_ratio)), 12)
 	var current_day_key: String = _get_current_day_key()
+	var publisher_npc_id: String = NPCOrderBridge.get_publisher_for_order(prefix, day_seed)
+	var affinity_reward: int = 2 if publisher_npc_id != "" else 0
 	return {
 		"order_id": "%s_%s" % [current_day_key, crop.crop_id],
 		"title": "%s：交付%s" % [prefix, crop.display_name],
@@ -261,6 +275,8 @@ func _build_order(crop: CropConfig, required_count: int, reward_bonus_ratio: flo
 		"required_count": required_count,
 		"reward_gold": reward_gold,
 		"reward_items": {},
+		"publisher_npc_id": publisher_npc_id,
+		"affinity_reward": affinity_reward,
 		"status": ORDER_STATUS_ACTIVE,
 	}
 
@@ -280,13 +296,21 @@ func _find_order_index(order_id: String) -> int:
 	return -1
 
 
-func _build_submit_result(success: bool, message: String, reward_gold: int = 0, reward_items: Dictionary = {}) -> Dictionary:
+func _build_submit_result(success: bool, message: String, reward_gold: int = 0, reward_items: Dictionary = {}, publisher_npc_id: String = "", affinity_reward: int = 0) -> Dictionary:
 	return {
 		"success": success,
 		"message": message,
 		"reward_gold": reward_gold,
 		"reward_items": reward_items.duplicate(true),
+		"publisher_npc_id": publisher_npc_id,
+		"affinity_reward": affinity_reward,
 	}
+
+
+func _build_order_completion_message(publisher_npc_id: String, affinity_reward: int) -> String:
+	if publisher_npc_id == "" or affinity_reward <= 0:
+		return "订单完成"
+	return "%s 的委托已完成，好感提升 %d" % [_get_npc_display_name(publisher_npc_id), affinity_reward]
 
 
 func _pick_crop_from_pool(pool: Array[CropConfig], day_seed: int) -> CropConfig:
@@ -353,6 +377,8 @@ func _normalize_order_array(source_orders: Array) -> Array[Dictionary]:
 			"required_count": max(int(raw_order.get("required_count", 0)), 0),
 			"reward_gold": max(int(raw_order.get("reward_gold", 0)), 0),
 			"reward_items": raw_order.get("reward_items", {}) if raw_order.get("reward_items", {}) is Dictionary else {},
+			"publisher_npc_id": String(raw_order.get("publisher_npc_id", "")),
+			"affinity_reward": max(int(raw_order.get("affinity_reward", 0)), 0),
 			"status": String(raw_order.get("status", ORDER_STATUS_ACTIVE)),
 		}
 		if String(order["order_id"]) == "" or String(order["item_id"]) == "":
@@ -370,3 +396,19 @@ func _extract_completed_order_ids(source_orders: Array[Dictionary]) -> PackedStr
 		if order_id != "" and not ids.has(order_id):
 			ids.append(order_id)
 	return ids
+
+
+func get_npc_display_name(npc_id: String) -> String:
+	return _get_npc_display_name(npc_id)
+
+
+func _get_npc_display_name(npc_id: String) -> String:
+	match npc_id:
+		"npc_general_store":
+			return "沈老板"
+		"npc_crafter":
+			return "铁匠顾"
+		"npc_resident":
+			return "阿棠"
+		_:
+			return npc_id

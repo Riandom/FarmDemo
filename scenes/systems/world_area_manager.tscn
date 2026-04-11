@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/world_area_manager.gd" id="1_world_area_manager"]
+
+[node name="WorldAreaManager" type="Node"]
+script = ExtResource("1_world_area_manager")

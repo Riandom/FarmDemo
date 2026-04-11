@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/npc/npc_actor.gd" id="1_npc"]
+
+[node name="NpcResident" type="Node2D"]
+script = ExtResource("1_npc")
+npc_id = "npc_resident"
+display_name = "阿棠"
+liked_items = PackedStringArray("crop_strawberry", "crop_pea", "crop_carrot")
+disliked_items = PackedStringArray("ore_fragment", "seed_wheat")
+default_first_dialogue = "镇子不大，但每天经过的人都不一样。"
+default_repeat_dialogue = "我再四处看看。"
+morning_first_dialogue = "早上我喜欢先去公告板看看，有没有新消息。"
+morning_repeat_dialogue = "今天还算平静，希望别突然出什么岔子。"
+afternoon_first_dialogue = "下午广场最热闹，站在这里能听到不少闲话。"
+afternoon_repeat_dialogue = "你要是常来镇上，迟早会把每个人的脾气都摸透。"
+evening_first_dialogue = "一到傍晚，镇子就安静下来了。"
+evening_repeat_dialogue = "我准备回去了，明天见。"
+morning_anchor_id = "request_board"
+afternoon_anchor_id = "resident"
+evening_anchor_id = "resident"
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.63, 0.74, 0.78, 1)
+polygon = PackedVector2Array(-12, -22, 12, -22, 12, 22, -12, 22)
+
+[node name="Scarf" type="Polygon2D" parent="."]
+color = Color(0.8, 0.42, 0.34, 1)
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 4, -8, 4)

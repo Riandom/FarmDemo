@@ -77,6 +77,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "作物"
 
+[node name="MaterialButton" type="Button" parent="Panel/VBoxContainer/FilterBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "材料"
+
 [node name="GridPanel" type="PanelContainer" parent="Panel/VBoxContainer"]
 custom_minimum_size = Vector2(800, 410)
 layout_mode = 2

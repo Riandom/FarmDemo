@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://ui_root_scene_0001"]
+[gd_scene load_steps=16 format=3 uid="uid://ui_root_scene_0001"]
 
 [ext_resource type="Script" path="res://scripts/ui/ui_root.gd" id="1_ui_root"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_prompt.tscn" id="2_interaction_prompt"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="3_inventory_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/storage_chest_ui.tscn" id="14_storage_chest_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/shop_ui.tscn" id="4_shop_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/combat_vendor_ui.tscn" id="5_combat_vendor"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gold_display.tscn" id="6_gold_display"]
@@ -13,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hotbar_ui.tscn" id="11_hotbar_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/order_board_ui.tscn" id="12_order_board"]
 [ext_resource type="PackedScene" path="res://scenes/ui/combat_health_display.tscn" id="13_combat_health"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_ui.tscn" id="15_dialogue_ui"]
 
 [node name="UIRoot" type="CanvasLayer"]
 script = ExtResource("1_ui_root")
@@ -32,11 +34,15 @@ color = Color(1, 1, 1, 0.08)
 
 [node name="InventoryUI" parent="." instance=ExtResource("3_inventory_ui")]
 
+[node name="StorageChestUI" parent="." instance=ExtResource("14_storage_chest_ui")]
+
 [node name="ShopUI" parent="." instance=ExtResource("4_shop_ui")]
 
 [node name="CombatVendorUI" parent="." instance=ExtResource("5_combat_vendor")]
 
 [node name="OrderBoardUI" parent="." instance=ExtResource("12_order_board")]
+
+[node name="DialogueUI" parent="." instance=ExtResource("15_dialogue_ui")]
 
 [node name="GoldDisplay" parent="." instance=ExtResource("6_gold_display")]
 

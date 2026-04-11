@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/interactables/storage_chest.gd" id="1_storage_chest"]
+[ext_resource type="Texture2D" path="res://assets/sprites/placeholder/ui/panel_background.png" id="2_chest_texture"]
+
+[sub_resource type="RectangleShape2D" id="1_shape"]
+size = Vector2(36, 36)
+
+[node name="StorageChest" type="Area2D"]
+script = ExtResource("1_storage_chest")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_chest_texture")
+scale = Vector2(0.35, 0.35)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1_shape")

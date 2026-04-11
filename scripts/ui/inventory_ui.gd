@@ -9,6 +9,7 @@ const _FILTER_ALL: String = "all"
 const _FILTER_TOOL: String = "tool"
 const _FILTER_SEED: String = "seed"
 const _FILTER_CROP: String = "crop"
+const _FILTER_MATERIAL: String = "material"
 const _HOTBAR_SIZE: int = 10
 const _SLOT_COUNT: int = 50
 const _ITEM_ICON_ROOT: String = "res://assets/sprites/placeholder/items"
@@ -29,6 +30,7 @@ var _slot_widgets: Array = []
 @onready var tool_filter_button: Button = $Panel/VBoxContainer/FilterBar/ToolButton
 @onready var seed_filter_button: Button = $Panel/VBoxContainer/FilterBar/SeedButton
 @onready var crop_filter_button: Button = $Panel/VBoxContainer/FilterBar/CropButton
+@onready var material_filter_button: Button = $Panel/VBoxContainer/FilterBar/MaterialButton
 @onready var item_grid: GridContainer = $Panel/VBoxContainer/GridPanel/ItemGrid
 @onready var hint_label: Label = $Panel/VBoxContainer/Footer/HintLabel
 @onready var panel: PanelContainer = $Panel
@@ -89,6 +91,8 @@ func _connect_buttons() -> void:
 		seed_filter_button.pressed.connect(_on_filter_button_pressed.bind(_FILTER_SEED))
 	if not crop_filter_button.pressed.is_connected(_on_filter_button_pressed.bind(_FILTER_CROP)):
 		crop_filter_button.pressed.connect(_on_filter_button_pressed.bind(_FILTER_CROP))
+	if not material_filter_button.pressed.is_connected(_on_filter_button_pressed.bind(_FILTER_MATERIAL)):
+		material_filter_button.pressed.connect(_on_filter_button_pressed.bind(_FILTER_MATERIAL))
 
 
 func _build_slot_grid() -> void:
@@ -346,6 +350,7 @@ func _apply_filter_button_state() -> void:
 	_style_filter_button(tool_filter_button, _current_filter == _FILTER_TOOL)
 	_style_filter_button(seed_filter_button, _current_filter == _FILTER_SEED)
 	_style_filter_button(crop_filter_button, _current_filter == _FILTER_CROP)
+	_style_filter_button(material_filter_button, _current_filter == _FILTER_MATERIAL)
 
 
 func _style_filter_button(button: Button, is_active: bool) -> void:
@@ -378,7 +383,7 @@ func _apply_ui_theme() -> void:
 	close_button.add_theme_stylebox_override("hover", _build_textured_stylebox("res://assets/sprites/placeholder/ui/button_hover.png", 8))
 	close_button.add_theme_stylebox_override("pressed", _build_textured_stylebox("res://assets/sprites/placeholder/ui/button_pressed.png", 8))
 
-	for button in [all_filter_button, tool_filter_button, seed_filter_button, crop_filter_button]:
+	for button in [all_filter_button, tool_filter_button, seed_filter_button, crop_filter_button, material_filter_button]:
 		button.add_theme_stylebox_override("normal", _build_textured_stylebox(_UI_BUTTON_NORMAL_TEXTURE_PATH, 8))
 		button.add_theme_stylebox_override("hover", _build_textured_stylebox("res://assets/sprites/placeholder/ui/button_hover.png", 8))
 		button.add_theme_stylebox_override("pressed", _build_textured_stylebox("res://assets/sprites/placeholder/ui/button_pressed.png", 8))

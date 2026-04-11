@@ -6,7 +6,7 @@
 script = ExtResource("1_item_config")
 item_id = "ore_fragment"
 display_name = "矿石碎片"
-category = "other"
+category = "material"
 icon_path = "res://assets/sprites/placeholder/items/crop_corn.png"
 base_price = 12
 description = "洞窟中带回的基础矿物碎片，可直接售卖换钱。"

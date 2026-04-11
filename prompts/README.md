@@ -2,8 +2,8 @@
 
 ## 文件说明
 
-本文件夹包含从 `Prompt 01` 到 `Prompt 18` 的阶段提示词，用于分阶段推进 FarmDemo。  
-当前项目已经从“项目初始化阶段”推进到“Phase 6 战斗原型接入阶段”。
+本文件夹包含从 `Prompt 01` 到 `Prompt 23` 的阶段提示词，用于分阶段推进 FarmDemo。  
+当前项目已经从“项目初始化阶段”推进到“Phase 7 世界区域 / 镇子 / NPC 第一轮骨架已接入阶段”。
 
 这些 Prompt 不再适合按 `01 -> 16` 机械全量重跑。  
 正确用法是：
@@ -15,18 +15,32 @@
 
 ## 当前阶段建议
 
-如果你是基于现在这个仓库继续开发，**应从 Phase 6 开始**：
+如果你是基于现在这个仓库继续开发，**不要直接继续扩写战斗**。  
+`Prompt 19 -> 23` 已经按顺序接入，当前更适合做的是：
 
-1. `prompt-18-dart-cave-combat-prototype.md`
+- 回归验证
+- 文档与索引同步
+- 在 `Phase 7` 基础上继续做后续细化功能
 
-推荐顺序：
+建议先看：
 
-- `18`
+1. `docs/phase7-town-npc-world-structure.md`
+2. `docs/guides/current-to-full-game-roadmap.md`
+3. `docs/phase6-combat-prototype-implementation.md`
+
+Phase 7 已接入内容：
+
+- `19` 农场生活支撑系统补完
+- `20` 世界区域与场景切换系统
+- `21` 镇子地图、小屋接入与基础入口布局
+- `22` NPC 交互框架、基础对话与简单日程
+- `23` 好感度、送礼、NPC 委托与镇子商店承载
 
 原因：
 
 - `Prompt 18` 已经把 Phase 6 的战斗探索最小闭环接入到当前仓库
-- 当前目标不是再加农场系统，而是验证并继续深化“经营 -> 战斗准备 -> 洞窟探索”
+- 当前更适合先冻结战斗原型，转做世界结构、镇子与 NPC 基础层
+- 这样能承接现有种田、商店、订单、背包和时间系统
 
 ---
 
@@ -53,6 +67,25 @@
 | 16 | `prompt-16-order-system.md` | 订单与农场经济反馈系统 | 已接入 |
 | 17 | `prompt-17-inventory-hotbar-shop-ui.md` | 背包、快捷栏与商店 UI 重构 | 已接入 |
 | 18 | `prompt-18-dart-cave-combat-prototype.md` | 飞镖战斗与小型洞窟探索原型 | 已接入原型 |
+| 19 | `prompt-19-farm-life-support-system.md` | 农场生活支撑系统补完 | 已接入 |
+| 20 | `prompt-20-world-area-scene-transition-system.md` | 世界区域与场景切换系统 | 已接入 |
+| 21 | `prompt-21-town-house-layout-and-entry.md` | 镇子地图、小屋接入与基础入口布局 | 已接入 |
+| 22 | `prompt-22-npc-interaction-dialogue-schedule.md` | NPC 交互框架、基础对话与简单日程 | 已接入 |
+| 23 | `prompt-23-affinity-gifts-npc-orders-town-shop.md` | 好感度、送礼、NPC 委托与镇子商店承载 | 已接入 |
+
+---
+
+## Phase 7 Prompt 状态
+
+以下 Prompt 已按 `Phase 7` 顺序生成并接入代码，后续若继续扩写应以这些实现为基线：
+
+| 阶段 | 预定功能定位 | 当前状态 |
+|---|---|---|
+| 19 | 农场生活支撑系统补完 | 已接入 |
+| 20 | 世界区域与场景切换系统 | 已接入 |
+| 21 | 镇子地图、小屋接入与基础入口布局 | 已接入 |
+| 22 | NPC 交互框架、基础对话与简单日程 | 已接入 |
+| 23 | 好感度、送礼、NPC 委托与镇子商店承载 | 已接入 |
 
 ---
 
@@ -64,14 +97,14 @@
 
 - 你已经有当前仓库
 - 你不想回滚到最初阶段
-- 你要继续做 Phase 6
+- 你要在 `Phase 7` 已有骨架上继续扩写
 
 操作方式：
 
-1. 打开 `prompt-18-dart-cave-combat-prototype.md`
-2. 对照当前仓库核对是否还有未实现或待打磨项
-3. 在 Godot 中验证战斗原型
-4. 原型稳定后，再继续拆下一阶段的洞窟深化、战斗供应 NPC 或镇子层
+1. 打开 `docs/phase7-town-npc-world-structure.md`
+2. 先核对 `Prompt 19 -> 23` 的已实现边界
+3. 在 Godot 中验证新增功能没有回归
+4. 再基于现有实现继续生成后续 Prompt
 
 ### 回查历史设计
 
@@ -120,6 +153,43 @@
 - 战败或撤退能正确返回
 - 洞窟收益能回到主循环
 
+### Prompt 19 验证要点
+
+- 农场中有 1 个可交互储物箱
+- 玩家可在背包和储物箱之间稳定存取物品
+- 储物箱内容可正确存档和读档恢复
+- 背包和商店筛选能识别 `材料`
+- `ore_fragment`、`cave_essence` 被正确归类为 `material`
+
+### Prompt 20 验证要点
+
+- 玩家能在 `farm / house / town / cave` 之间稳定切换
+- 各区域入口和返回点不会串场
+- 存档读档后当前区域恢复正确
+- 洞窟原型能兼容新区域系统
+
+### Prompt 21 验证要点
+
+- 小屋内有床和主储物箱
+- 镇子有稳定的 hub 布局与入口锚点
+- 农场里不再残留旧床和旧主储物箱交互
+- 农场、小屋、镇子之间的往返链路稳定
+
+### Prompt 22 验证要点
+
+- 镇子里 3 个 NPC 可见且可交互
+- 同一天首次对话和重复对话文本不同
+- 杂货商可通过对话服务按钮打开商店
+- NPC 会按时段切换站位或显隐状态
+
+### Prompt 23 验证要点
+
+- NPC 好感度会在首次对话和送礼后变化
+- 送礼会消耗物品并给出喜欢/普通/不喜欢反馈
+- 部分订单会显示发布 NPC 和关系奖励
+- 完成 NPC 委托后金币与好感度都会增长
+- 存档读档后好感度和订单状态保持正确
+
 ---
 
 ## 使用原则
@@ -163,10 +233,11 @@
 - `docs/phase5-farming-economy-system.md`
 - `docs/phase6-combat-cave-prototype.md`
 - `docs/phase6-combat-prototype-implementation.md`
+- `docs/phase7-town-npc-world-structure.md`
 - `docs/guides/current-to-full-game-roadmap.md`
 
 如果目标是继续推进当前游戏，而不是回顾历史，优先看：
 
 1. `current-to-full-game-roadmap.md`
-2. `phase6-combat-cave-prototype.md`
-3. `prompt-18`
+2. `phase7-town-npc-world-structure.md`
+3. `phase6-combat-prototype-implementation.md`

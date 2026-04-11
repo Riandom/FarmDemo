@@ -96,6 +96,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "作物"
 
+[node name="MaterialButton" type="Button" parent="Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "材料"
+
 [node name="BuyScroll" type="ScrollContainer" parent="Panel/VBoxContainer/Content/BuyColumn"]
 custom_minimum_size = Vector2(450, 360)
 layout_mode = 2
@@ -141,6 +146,11 @@ text = "种子"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "作物"
+
+[node name="MaterialButton" type="Button" parent="Panel/VBoxContainer/Content/SellColumn/SellFilterBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "材料"
 
 [node name="SellScroll" type="ScrollContainer" parent="Panel/VBoxContainer/Content/SellColumn"]
 custom_minimum_size = Vector2(450, 360)

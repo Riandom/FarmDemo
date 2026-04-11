@@ -28,7 +28,8 @@ const _CATEGORY_PRIORITY: Dictionary = {
 	"tool": 0,
 	"seed": 1,
 	"crop": 2,
-	"other": 3,
+	"material": 3,
+	"other": 4,
 }
 
 ## 当前金币数量
@@ -61,11 +62,16 @@ const _CATEGORY_PRIORITY: Dictionary = {
 @export var plot_states: Dictionary = {}
 @export var save_file_path: String = "user://save_1.save"
 @export var current_world_area: String = "farm"
+@export var npc_daily_interactions: Dictionary = {}
+@export var npc_affinity: Dictionary = {}
+
+@onready var time_manager = get_node_or_null("/root/TimeManager")
 
 
 func _ready() -> void:
 	"""初始化 Demo 默认数据，并向现有 UI 广播一次状态。"""
 	_initialize_default_data()
+	_connect_time_signals()
 	_emit_full_state()
 
 
@@ -133,9 +139,9 @@ func get_stamina_ratio() -> float:
 
 
 ## 添加物品到背包
-func add_item(item_id: String, count: int = 1) -> void:
+func add_item(item_id: String, count: int = 1) -> bool:
 	if item_id == "" or count <= 0:
-		return
+		return false
 
 	var existing_index: int = _find_slot_index_by_item(item_id)
 	if existing_index != -1:
@@ -146,7 +152,7 @@ func add_item(item_id: String, count: int = 1) -> void:
 		var target_index: int = _find_preferred_empty_slot(item_id)
 		if target_index == -1:
 			push_warning("[GameManager] Inventory full, failed to add item: %s" % item_id)
-			return
+			return false
 		inventory_slots[target_index] = {
 			"item_id": item_id,
 			"count": count,
@@ -154,6 +160,7 @@ func add_item(item_id: String, count: int = 1) -> void:
 
 	_refresh_inventory_state()
 	emit_signal("item_added", item_id, count)
+	return true
 
 
 ## 从背包移除物品；成功时返回 true
@@ -309,6 +316,7 @@ func export_save_data() -> Dictionary:
 		"current_hotbar_index": current_hotbar_index,
 		"current_tool": current_tool,
 		"current_world_area": current_world_area,
+		"npc_affinity": npc_affinity.duplicate(true),
 	}
 
 
@@ -344,11 +352,45 @@ func apply_save_data(data: Dictionary) -> void:
 	current_world_area = String(data.get("current_world_area", "farm"))
 	if current_world_area == "":
 		current_world_area = "farm"
+	npc_daily_interactions = {}
+	var saved_affinity = data.get("npc_affinity", {})
+	npc_affinity = saved_affinity.duplicate(true) if saved_affinity is Dictionary else {}
 
 	_refresh_unlocked_tools_from_hotbar()
 	_sync_current_tool(false)
 	_emit_full_state()
 	emit_signal("game_loaded", export_save_data())
+
+
+func has_npc_talked_today(npc_id: String) -> bool:
+	if npc_id == "":
+		return false
+	return bool(npc_daily_interactions.get(npc_id, false))
+
+
+func mark_npc_talked_today(npc_id: String) -> void:
+	if npc_id == "":
+		return
+	npc_daily_interactions[npc_id] = true
+
+
+func reset_daily_npc_interactions() -> void:
+	npc_daily_interactions.clear()
+
+
+func get_npc_affinity(npc_id: String) -> int:
+	if npc_id == "":
+		return 0
+	return int(npc_affinity.get(npc_id, 0))
+
+
+func add_npc_affinity(npc_id: String, delta: int) -> int:
+	if npc_id == "" or delta == 0:
+		return get_npc_affinity(npc_id)
+
+	var next_value: int = NPCRelationshipRuntime.clamp_affinity(get_npc_affinity(npc_id) + delta)
+	npc_affinity[npc_id] = next_value
+	return next_value
 
 
 func _initialize_default_data() -> void:
@@ -373,6 +415,20 @@ func _initialize_default_data() -> void:
 	if current_tool == "":
 		current_hotbar_index = _find_first_occupied_hotbar_index()
 		_sync_current_tool(false)
+	npc_daily_interactions = {}
+
+
+func _connect_time_signals() -> void:
+	if time_manager == null:
+		time_manager = get_node_or_null("/root/TimeManager")
+	if time_manager == null:
+		return
+	if not time_manager.day_changed.is_connected(_on_day_changed):
+		time_manager.day_changed.connect(_on_day_changed)
+
+
+func _on_day_changed(_day_in_term: int) -> void:
+	reset_daily_npc_interactions()
 
 
 func _emit_full_state() -> void:
