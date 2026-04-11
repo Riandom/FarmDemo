@@ -14,7 +14,10 @@ var _player: Node = null
 @onready var interaction_prompt: Control = $InteractionPrompt
 @onready var inventory_ui: Control = $InventoryUI
 @onready var shop_ui: Control = $ShopUI
+@onready var combat_vendor_ui: Control = $CombatVendorUI
+@onready var order_ui: Control = $OrderBoardUI
 @onready var gold_display: Control = $GoldDisplay
+@onready var combat_health_display: Control = $CombatHealthDisplay
 @onready var time_display: Control = $TimeDisplay
 @onready var solar_term_popup: Control = $SolarTermPopup
 @onready var pause_menu_ui: Control = $PauseMenuUI
@@ -25,6 +28,8 @@ func _ready() -> void:
 	"""初始化 UI 注册表并连接子组件信号。"""
 	register_modal_ui("inventory", inventory_ui)
 	register_modal_ui("shop", shop_ui)
+	register_modal_ui("combat_vendor", combat_vendor_ui)
+	register_modal_ui("orders", order_ui)
 	register_modal_ui("pause_menu", pause_menu_ui)
 	_connect_ui_signals()
 	_bind_child_context()
@@ -49,6 +54,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("open_shop"):
 		toggle_shop()
 		get_viewport().set_input_as_handled()
+		return
+
+	if event.is_action_pressed("open_orders"):
+		toggle_orders()
+		get_viewport().set_input_as_handled()
 
 
 ## 设置玩家引用，供交互提示和输入锁定使用
@@ -56,6 +66,8 @@ func set_player(player: Node) -> void:
 	_player = player
 	if interaction_prompt != null and interaction_prompt.has_method("set_player"):
 		interaction_prompt.call("set_player", player)
+	if combat_health_display != null and combat_health_display.has_method("set_player"):
+		combat_health_display.call("set_player", player)
 
 	_sync_player_ui_state(is_any_modal_open())
 
@@ -123,6 +135,14 @@ func toggle_shop() -> void:
 	open_modal("shop")
 
 
+func toggle_orders() -> void:
+	if _current_modal_type == "orders":
+		close_current_ui()
+		return
+
+	open_modal("orders")
+
+
 func toggle_pause_menu() -> void:
 	if _current_modal_type == "pause_menu":
 		close_current_ui()
@@ -159,6 +179,18 @@ func _connect_ui_signals() -> void:
 	if shop_ui.has_signal("shop_transaction_completed") and not shop_ui.is_connected("shop_transaction_completed", Callable(self, "_on_shop_transaction_completed")):
 		shop_ui.connect("shop_transaction_completed", Callable(self, "_on_shop_transaction_completed"))
 
+	if combat_vendor_ui.has_signal("ui_opened") and not combat_vendor_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
+		combat_vendor_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
+	if combat_vendor_ui.has_signal("ui_closed") and not combat_vendor_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
+		combat_vendor_ui.connect("ui_closed", Callable(self, "_on_modal_ui_closed"))
+	if combat_vendor_ui.has_signal("shop_transaction_completed") and not combat_vendor_ui.is_connected("shop_transaction_completed", Callable(self, "_on_shop_transaction_completed")):
+		combat_vendor_ui.connect("shop_transaction_completed", Callable(self, "_on_shop_transaction_completed"))
+
+	if order_ui.has_signal("ui_opened") and not order_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
+		order_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
+	if order_ui.has_signal("ui_closed") and not order_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
+		order_ui.connect("ui_closed", Callable(self, "_on_modal_ui_closed"))
+
 	if pause_menu_ui.has_signal("ui_opened") and not pause_menu_ui.is_connected("ui_opened", Callable(self, "_on_modal_ui_opened")):
 		pause_menu_ui.connect("ui_opened", Callable(self, "_on_modal_ui_opened"))
 	if pause_menu_ui.has_signal("ui_closed") and not pause_menu_ui.is_connected("ui_closed", Callable(self, "_on_modal_ui_closed")):
@@ -175,6 +207,12 @@ func _bind_child_context() -> void:
 
 	if shop_ui != null and shop_ui.has_method("set_ui_root"):
 		shop_ui.call("set_ui_root", self)
+
+	if combat_vendor_ui != null and combat_vendor_ui.has_method("set_ui_root"):
+		combat_vendor_ui.call("set_ui_root", self)
+
+	if order_ui != null and order_ui.has_method("set_ui_root"):
+		order_ui.call("set_ui_root", self)
 
 	if pause_menu_ui != null and pause_menu_ui.has_method("set_ui_root"):
 		pause_menu_ui.call("set_ui_root", self)

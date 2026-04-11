@@ -5,7 +5,7 @@ signal save_completed(success: bool, file_path: String)
 signal load_started(save_type: String, slot_index: int)
 signal load_completed(success: bool, error_message: String)
 
-const SAVE_VERSION: String = "0.6.0"
+const SAVE_VERSION: String = "0.7.0"
 const SAVE_DIR: String = "user://"
 const AUTO_SAVE_FILE: String = "user://save_auto.json"
 const MANUAL_SAVE_FILES: PackedStringArray = [
@@ -21,6 +21,7 @@ const MANUAL_SAVE_FILES: PackedStringArray = [
 @onready var farm_manager = get_node_or_null("/root/FarmManager")
 @onready var event_manager = get_node_or_null("/root/EventManager")
 @onready var effect_manager = get_node_or_null("/root/EffectManager")
+@onready var order_manager = get_node_or_null("/root/OrderManager")
 
 
 func save_game_auto() -> void:
@@ -161,7 +162,7 @@ func _load_from_path(file_path: String) -> void:
 	if version == "":
 		emit_signal("load_completed", false, "存档缺少版本信息")
 		return
-	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4") and not version.begins_with("0.5") and not version.begins_with("0.6"):
+	if not version.begins_with("0.2") and not version.begins_with("0.3") and not version.begins_with("0.4") and not version.begins_with("0.5") and not version.begins_with("0.6") and not version.begins_with("0.7"):
 		emit_signal("load_completed", false, "存档版本不兼容")
 		return
 
@@ -174,6 +175,7 @@ func _load_from_path(file_path: String) -> void:
 	var time_data = game_state.get("time", {})
 	var farm_data = game_state.get("farm", {})
 	var effects_data = game_state.get("effects", {})
+	var orders_data = game_state.get("orders", {})
 	if not (player_data is Dictionary):
 		emit_signal("load_completed", false, "存档缺少玩家数据")
 		return
@@ -193,6 +195,7 @@ func _load_from_path(file_path: String) -> void:
 	_apply_time_state(time_data)
 	_apply_effect_state(effects_data)
 	_apply_farm_state(farm_data)
+	_apply_order_state(orders_data)
 	_publish_save_loaded(file_path)
 	emit_signal("load_completed", true, "")
 
@@ -219,6 +222,7 @@ func _build_save_data() -> Dictionary:
 			"player": player_data,
 			"time": time_manager.export_save_data(),
 			"effects": _build_effect_data(),
+			"orders": _build_order_data(),
 			"farm": {
 				"plots": farm_plots,
 			},
@@ -322,6 +326,26 @@ func _build_effect_data() -> Dictionary:
 	if effect_manager == null or not effect_manager.has_method("export_save_data"):
 		return {}
 	return effect_manager.call("export_save_data") as Dictionary
+
+
+func _build_order_data() -> Dictionary:
+	if order_manager == null:
+		order_manager = get_node_or_null("/root/OrderManager")
+	if order_manager == null or not order_manager.has_method("export_save_data"):
+		return {}
+	return order_manager.call("export_save_data") as Dictionary
+
+
+func _apply_order_state(order_data: Variant) -> void:
+	if order_manager == null:
+		order_manager = get_node_or_null("/root/OrderManager")
+	if order_manager == null or not order_manager.has_method("apply_save_data"):
+		return
+
+	if order_data is Dictionary:
+		order_manager.call("apply_save_data", order_data)
+	else:
+		order_manager.call("apply_save_data", {})
 
 
 func _publish_save_loaded(file_path: String) -> void:

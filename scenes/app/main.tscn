@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://main_scene_0001"]
+[gd_scene load_steps=6 format=3 uid="uid://main_scene_0001"]
 
 [ext_resource type="Script" path="res://scripts/app/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player.tscn" id="2_player"]
@@ -14,5 +14,7 @@ crop_plot_scene = ExtResource("4_crop_plot")
 [node name="FarmTiles" type="Node2D" parent="."]
 
 [node name="Furniture" type="Node2D" parent="."]
+
+[node name="ExploreRoot" type="Node2D" parent="."]
 
 [node name="UI" parent="." instance=ExtResource("3_ui_root")]

@@ -94,6 +94,8 @@ func _handle_interaction_input() -> void:
 	current_target_interactable = detect_interaction_target()
 	current_target_plot = current_target_interactable as Plot
 	if current_target_interactable == null:
+		if _try_execute_combat_action():
+			last_interaction_time = _get_now_seconds()
 		return
 
 	if _try_execute_generic_interaction(current_target_interactable):
@@ -116,6 +118,28 @@ func _handle_interaction_input() -> void:
 		return
 
 	execute_interaction(current_target_plot, action_id)
+
+
+func _try_execute_combat_action() -> bool:
+	if game_manager == null:
+		game_manager = get_node_or_null("/root/GameManager")
+	if game_manager == null:
+		return false
+
+	var current_item: String = String(game_manager.get_current_tool())
+	if current_item == "":
+		return false
+
+	var current_scene := get_tree().current_scene
+	if current_scene == null or not current_scene.has_method("player_use_combat_item"):
+		return false
+
+	return bool(current_scene.call(
+		"player_use_combat_item",
+		current_item,
+		player,
+		Vector2(player.get("facing_direction"))
+	))
 
 
 ## 检测前方可交互地块
@@ -377,6 +401,8 @@ func _detect_generic_interactable() -> Node:
 		if node == null or not is_instance_valid(node):
 			continue
 		if not (node is Node2D):
+			continue
+		if node is CanvasItem and not node.is_visible_in_tree():
 			continue
 		if node == player:
 			continue

@@ -47,6 +47,8 @@ func get_plot_at_world_position(world_position: Vector2, max_distance: float = 2
 	for plot in _plots:
 		if not is_instance_valid(plot):
 			continue
+		if plot is CanvasItem and not plot.is_visible_in_tree():
+			continue
 
 		var distance: float = plot.global_position.distance_to(world_position)
 		if distance <= closest_distance:

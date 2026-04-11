@@ -8,6 +8,7 @@ signal item_added(item_id: String, count: int)
 signal item_removed(item_id: String, count: int)
 signal tool_equipped(tool_id: String)
 signal stamina_changed(current_stamina: int, max_stamina: int)
+signal world_area_changed(area_id: String)
 signal game_saved(timestamp: int)
 signal game_loaded(data: Dictionary)
 
@@ -59,6 +60,7 @@ const _CATEGORY_PRIORITY: Dictionary = {
 @export var total_earnings: int = 0
 @export var plot_states: Dictionary = {}
 @export var save_file_path: String = "user://save_1.save"
+@export var current_world_area: String = "farm"
 
 
 func _ready() -> void:
@@ -255,6 +257,17 @@ func get_current_hotbar_index() -> int:
 	return current_hotbar_index
 
 
+func set_current_world_area(area_id: String) -> void:
+	if area_id == "":
+		area_id = "farm"
+
+	if current_world_area == area_id:
+		return
+
+	current_world_area = area_id
+	emit_signal("world_area_changed", current_world_area)
+
+
 ## 设置当前手持项
 func set_current_tool(tool_id: String) -> void:
 	if tool_id == "":
@@ -295,6 +308,7 @@ func export_save_data() -> Dictionary:
 		"unlocked_tools": Array(get_unlocked_tools()),
 		"current_hotbar_index": current_hotbar_index,
 		"current_tool": current_tool,
+		"current_world_area": current_world_area,
 	}
 
 
@@ -326,6 +340,10 @@ func apply_save_data(data: Dictionary) -> void:
 
 	if current_hotbar_index < 0 or current_hotbar_index >= HOTBAR_SIZE:
 		current_hotbar_index = 0
+
+	current_world_area = String(data.get("current_world_area", "farm"))
+	if current_world_area == "":
+		current_world_area = "farm"
 
 	_refresh_unlocked_tools_from_hotbar()
 	_sync_current_tool(false)
@@ -364,6 +382,7 @@ func _emit_full_state() -> void:
 	emit_signal("hotbar_changed", get_hotbar_slots(), current_hotbar_index)
 	emit_signal("tool_equipped", current_tool)
 	emit_signal("stamina_changed", stamina, max_stamina)
+	emit_signal("world_area_changed", current_world_area)
 
 
 func _refresh_inventory_state() -> void:

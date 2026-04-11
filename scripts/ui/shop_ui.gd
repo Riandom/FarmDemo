@@ -15,6 +15,11 @@ const _UI_BUTTON_HOVER_TEXTURE_PATH: String = "res://assets/sprites/placeholder/
 const _UI_BUTTON_PRESSED_TEXTURE_PATH: String = "res://assets/sprites/placeholder/ui/button_pressed.png"
 
 @export var shop_config: ShopConfig
+@export var ui_type: String = "shop"
+@export var panel_title: String = "商店"
+@export var buy_title: String = "购买"
+@export var sell_title: String = "售卖"
+@export var feedback_welcome_text: String = "欢迎光临"
 
 var _ui_root: UIRoot = null
 var _warned_missing_game_manager: bool = false
@@ -26,6 +31,9 @@ var _sort_entries: Dictionary = {}
 
 @onready var config_manager = get_node_or_null("/root/ConfigManager")
 @onready var close_button: Button = $Panel/VBoxContainer/Header/CloseButton
+@onready var title_label: Label = $Panel/VBoxContainer/Header/Title
+@onready var buy_title_label: Label = $Panel/VBoxContainer/Content/BuyColumn/BuyTitle
+@onready var sell_title_label: Label = $Panel/VBoxContainer/Content/SellColumn/SellTitle
 @onready var buy_all_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/AllButton
 @onready var buy_tool_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/ToolButton
 @onready var buy_seed_button: Button = $Panel/VBoxContainer/Content/BuyColumn/BuyFilterBar/SeedButton
@@ -44,6 +52,7 @@ func _ready() -> void:
 	"""初始化商店数据源、筛选器和按钮事件。"""
 	visible = false
 	_apply_ui_theme()
+	_apply_text_labels()
 	_connect_buttons()
 	_prepare_config()
 	call_deferred("_connect_game_manager")
@@ -61,8 +70,9 @@ func open_ui() -> void:
 		return
 
 	visible = true
+	feedback_label.text = feedback_welcome_text
 	update_shop_display()
-	emit_signal("ui_opened", "shop")
+	emit_signal("ui_opened", ui_type)
 
 
 ## 关闭商店界面
@@ -71,7 +81,7 @@ func close_ui() -> void:
 		return
 
 	visible = false
-	emit_signal("ui_closed", "shop")
+	emit_signal("ui_closed", ui_type)
 
 
 ## 开关商店界面
@@ -178,6 +188,12 @@ func _prepare_config() -> void:
 	shop_config.validate_config()
 	_valid_buy_items = shop_config.get_valid_items("buy")
 	_valid_sell_items = shop_config.get_valid_items("sell")
+
+
+func _apply_text_labels() -> void:
+	title_label.text = panel_title
+	buy_title_label.text = buy_title
+	sell_title_label.text = sell_title
 
 
 func _connect_game_manager() -> void:
@@ -325,7 +341,7 @@ func _on_sell_button_pressed(item_id: String) -> void:
 
 func _on_close_button_pressed() -> void:
 	if _ui_root != null:
-		_ui_root.close_modal("shop")
+		_ui_root.close_modal(ui_type)
 		return
 
 	close_ui()

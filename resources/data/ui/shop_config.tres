@@ -171,5 +171,15 @@ sell_items = {
 "display_name": "稻谷",
 "icon": "res://assets/sprites/placeholder/items/crop_rice.png",
 "price": 24
+},
+"ore_fragment": {
+"display_name": "矿石碎片",
+"icon": "res://assets/sprites/placeholder/items/crop_corn.png",
+"price": 12
+},
+"cave_essence": {
+"display_name": "洞窟精粹",
+"icon": "res://assets/sprites/placeholder/items/crop_eggplant.png",
+"price": 18
 }
 }

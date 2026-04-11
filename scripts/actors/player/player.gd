@@ -17,6 +17,8 @@ signal player_interacted(interact_pos: Vector2, facing_dir: Vector2)
 ## 信号：请求打开 UI
 ## @param ui_type UI 类型 ("inventory" 或 "shop")
 signal ui_interaction_requested(ui_type: String)
+signal health_changed(current_health: int, max_health: int)
+signal player_defeated
 
 ## 当前朝向（上/下/左/右）
 var facing_direction: Vector2 = Vector2.DOWN
@@ -29,6 +31,9 @@ var _interact_timer: float = 0.0
 
 ## UI 打开状态
 var _ui_open: bool = false
+var max_health: int = 5
+var current_health: int = 5
+var _damage_cooldown: float = 0.0
 
 const _PLAYER_TEXTURE_PATHS: Dictionary = {
 	"idle_down": "res://assets/sprites/placeholder/player/idle_down.png",
@@ -53,10 +58,14 @@ func _ready() -> void:
 	_load_player_textures()
 	_apply_facing_transform()
 	_apply_texture_for_animation("idle_down")
+	emit_signal("health_changed", current_health, max_health)
 
 
 func _physics_process(delta: float) -> void:
 	"""物理更新循环 - 处理移动"""
+	if _damage_cooldown > 0.0:
+		_damage_cooldown = maxf(_damage_cooldown - delta, 0.0)
+
 	if _ui_open:
 		# UI 打开时禁用移动与物理推进
 		velocity = Vector2.ZERO
@@ -187,6 +196,30 @@ func set_ui_open(is_open: bool) -> void:
 ## 检查 UI 是否打开
 func is_ui_open() -> bool:
 	return _ui_open
+
+
+func receive_damage(amount: int) -> bool:
+	if amount <= 0 or _damage_cooldown > 0.0:
+		return false
+
+	current_health = maxi(current_health - amount, 0)
+	_damage_cooldown = 0.45
+	emit_signal("health_changed", current_health, max_health)
+	if current_health <= 0:
+		emit_signal("player_defeated")
+	return true
+
+
+func restore_health(amount: int) -> void:
+	if amount <= 0:
+		return
+	current_health = mini(current_health + amount, max_health)
+	emit_signal("health_changed", current_health, max_health)
+
+
+func restore_full_health() -> void:
+	current_health = max_health
+	emit_signal("health_changed", current_health, max_health)
 
 
 func _load_player_textures() -> void:

@@ -3,11 +3,13 @@ extends Node
 const _DEFAULT_SEASON_ID: String = "spring"
 
 @export var crops_dir: String = "res://resources/data/crops"
+@export var items_dir: String = "res://resources/data/items"
 @export var tools_dir: String = "res://resources/data/tools"
 @export var seasons_dir: String = "res://resources/data/seasons"
 @export var time_system_config_path: String = "res://resources/data/time_system_config.tres"
 
 var _crop_map: Dictionary = {}
+var _item_map: Dictionary = {}
 var _tool_map: Dictionary = {}
 var _season_map: Dictionary = {}
 var _time_config: TimeSystemConfig = null
@@ -21,11 +23,13 @@ func _ready() -> void:
 
 func preload_all_configs() -> void:
 	_crop_map.clear()
+	_item_map.clear()
 	_tool_map.clear()
 	_season_map.clear()
 	_time_config = null
 
 	_load_crop_configs()
+	_load_item_configs()
 	_load_tool_configs()
 	_load_season_configs()
 	_load_time_system_config()
@@ -63,6 +67,21 @@ func get_crop_config_by_harvest_item(harvest_item_id: String) -> CropConfig:
 	return null
 
 
+func get_item_config(item_id: String) -> ItemConfig:
+	var config: ItemConfig = _item_map.get(item_id) as ItemConfig
+	if config != null:
+		return config
+	return null
+
+
+func get_all_items() -> Array[ItemConfig]:
+	var result: Array[ItemConfig] = []
+	for value in _item_map.values():
+		if value is ItemConfig:
+			result.append(value)
+	return result
+
+
 func get_item_display_name(item_id: String) -> String:
 	if _tool_map.has(item_id):
 		var tool_config: ToolConfig = _tool_map.get(item_id) as ToolConfig
@@ -76,6 +95,10 @@ func get_item_display_name(item_id: String) -> String:
 	var harvest_crop: CropConfig = get_crop_config_by_harvest_item(item_id)
 	if harvest_crop != null and harvest_crop.display_name != "":
 		return harvest_crop.display_name
+
+	var item_config: ItemConfig = get_item_config(item_id)
+	if item_config != null and item_config.display_name != "":
+		return item_config.display_name
 
 	return item_id
 
@@ -92,6 +115,10 @@ func get_item_category(item_id: String) -> String:
 
 	if get_crop_config_by_harvest_item(item_id) != null:
 		return "crop"
+
+	var item_config: ItemConfig = get_item_config(item_id)
+	if item_config != null and item_config.category != "":
+		return item_config.category
 
 	return "other"
 
@@ -176,6 +203,13 @@ func _load_crop_configs() -> void:
 			_crop_map[resource.crop_id] = resource
 
 
+func _load_item_configs() -> void:
+	for path in _list_tres_files(items_dir):
+		var resource: Resource = load(path)
+		if resource is ItemConfig and _validate_item_config(resource):
+			_item_map[resource.item_id] = resource
+
+
 func _load_tool_configs() -> void:
 	for path in _list_tres_files(tools_dir):
 		var resource: Resource = load(path)
@@ -220,6 +254,13 @@ func _validate_crop_config(config: CropConfig) -> bool:
 		return false
 	if config.harvest_item_id == "":
 		push_warning("[ConfigManager] Ignored crop config with empty harvest_item_id: %s" % config.crop_id)
+		return false
+	return true
+
+
+func _validate_item_config(config: ItemConfig) -> bool:
+	if config.item_id == "":
+		push_warning("[ConfigManager] Ignored item config with empty item_id")
 		return false
 	return true
 

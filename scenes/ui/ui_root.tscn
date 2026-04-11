@@ -1,15 +1,18 @@
-[gd_scene load_steps=11 format=3 uid="uid://ui_root_scene_0001"]
+[gd_scene load_steps=14 format=3 uid="uid://ui_root_scene_0001"]
 
 [ext_resource type="Script" path="res://scripts/ui/ui_root.gd" id="1_ui_root"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_prompt.tscn" id="2_interaction_prompt"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="3_inventory_ui"]
 [ext_resource type="PackedScene" path="res://scenes/ui/shop_ui.tscn" id="4_shop_ui"]
-[ext_resource type="PackedScene" path="res://scenes/ui/gold_display.tscn" id="5_gold_display"]
-[ext_resource type="PackedScene" path="res://scenes/ui/time_display.tscn" id="6_time_display"]
-[ext_resource type="PackedScene" path="res://scenes/ui/solar_term_popup.tscn" id="7_solar_popup"]
-[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause_menu"]
-[ext_resource type="PackedScene" path="res://scenes/ui/stamina_display.tscn" id="9_stamina_display"]
-[ext_resource type="PackedScene" path="res://scenes/ui/hotbar_ui.tscn" id="10_hotbar_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat_vendor_ui.tscn" id="5_combat_vendor"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gold_display.tscn" id="6_gold_display"]
+[ext_resource type="PackedScene" path="res://scenes/ui/time_display.tscn" id="7_time_display"]
+[ext_resource type="PackedScene" path="res://scenes/ui/solar_term_popup.tscn" id="8_solar_popup"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="9_pause_menu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/stamina_display.tscn" id="10_stamina_display"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hotbar_ui.tscn" id="11_hotbar_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/order_board_ui.tscn" id="12_order_board"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combat_health_display.tscn" id="13_combat_health"]
 
 [node name="UIRoot" type="CanvasLayer"]
 script = ExtResource("1_ui_root")
@@ -25,18 +28,24 @@ color = Color(1, 1, 1, 0.08)
 
 [node name="InteractionPrompt" parent="." instance=ExtResource("2_interaction_prompt")]
 
-[node name="HotbarUI" parent="." instance=ExtResource("10_hotbar_ui")]
+[node name="HotbarUI" parent="." instance=ExtResource("11_hotbar_ui")]
 
 [node name="InventoryUI" parent="." instance=ExtResource("3_inventory_ui")]
 
 [node name="ShopUI" parent="." instance=ExtResource("4_shop_ui")]
 
-[node name="GoldDisplay" parent="." instance=ExtResource("5_gold_display")]
+[node name="CombatVendorUI" parent="." instance=ExtResource("5_combat_vendor")]
 
-[node name="StaminaDisplay" parent="." instance=ExtResource("9_stamina_display")]
+[node name="OrderBoardUI" parent="." instance=ExtResource("12_order_board")]
 
-[node name="TimeDisplay" parent="." instance=ExtResource("6_time_display")]
+[node name="GoldDisplay" parent="." instance=ExtResource("6_gold_display")]
 
-[node name="SolarTermPopup" parent="." instance=ExtResource("7_solar_popup")]
+[node name="StaminaDisplay" parent="." instance=ExtResource("10_stamina_display")]
 
-[node name="PauseMenuUI" parent="." instance=ExtResource("8_pause_menu")]
+[node name="CombatHealthDisplay" parent="." instance=ExtResource("13_combat_health")]
+
+[node name="TimeDisplay" parent="." instance=ExtResource("7_time_display")]
+
+[node name="SolarTermPopup" parent="." instance=ExtResource("8_solar_popup")]
+
+[node name="PauseMenuUI" parent="." instance=ExtResource("9_pause_menu")]

@@ -2,8 +2,8 @@
 
 ## 文件说明
 
-本文件夹包含从 `Prompt 01` 到 `Prompt 16` 的阶段提示词，用于分阶段推进 FarmDemo。  
-当前项目已经从“项目初始化阶段”推进到“Phase 5 种田经营深化阶段”。
+本文件夹包含从 `Prompt 01` 到 `Prompt 18` 的阶段提示词，用于分阶段推进 FarmDemo。  
+当前项目已经从“项目初始化阶段”推进到“Phase 6 战斗原型接入阶段”。
 
 这些 Prompt 不再适合按 `01 -> 16` 机械全量重跑。  
 正确用法是：
@@ -15,21 +15,18 @@
 
 ## 当前阶段建议
 
-如果你是基于现在这个仓库继续开发，**应从 Phase 5 开始**：
+如果你是基于现在这个仓库继续开发，**应从 Phase 6 开始**：
 
-1. `prompt-14-stamina-system.md`
-2. `prompt-15-multi-crop-season-economy.md`
-3. `prompt-16-order-system.md`
+1. `prompt-18-dart-cave-combat-prototype.md`
 
-推荐顺序必须严格保持：
+推荐顺序：
 
-- `14 -> 15 -> 16`
+- `18`
 
 原因：
 
-- `Prompt 14` 先补经营压力
-- `Prompt 15` 再补经营选择
-- `Prompt 16` 最后补经营目标
+- `Prompt 18` 已经把 Phase 6 的战斗探索最小闭环接入到当前仓库
+- 当前目标不是再加农场系统，而是验证并继续深化“经营 -> 战斗准备 -> 洞窟探索”
 
 ---
 
@@ -51,9 +48,11 @@
 | 11 | `prompt-11-four-seasons-cycle.md` | 四季循环 | 已接入 |
 | 12 | `prompt-12-event-system.md` | 事件系统 | 已接入 |
 | 13 | `prompt-13-effect-system.md` | 状态/效果系统 | 已接入 |
-| 14 | `prompt-14-stamina-system.md` | 体力与行动消耗系统 | 下一阶段 |
-| 15 | `prompt-15-multi-crop-season-economy.md` | 多作物与季节经营系统 | 下一阶段 |
-| 16 | `prompt-16-order-system.md` | 订单与农场经济反馈系统 | 下一阶段 |
+| 14 | `prompt-14-stamina-system.md` | 体力与行动消耗系统 | 已接入 |
+| 15 | `prompt-15-multi-crop-season-economy.md` | 多作物与季节经营系统 | 已接入 |
+| 16 | `prompt-16-order-system.md` | 订单与农场经济反馈系统 | 已接入 |
+| 17 | `prompt-17-inventory-hotbar-shop-ui.md` | 背包、快捷栏与商店 UI 重构 | 已接入 |
+| 18 | `prompt-18-dart-cave-combat-prototype.md` | 飞镖战斗与小型洞窟探索原型 | 已接入原型 |
 
 ---
 
@@ -65,15 +64,14 @@
 
 - 你已经有当前仓库
 - 你不想回滚到最初阶段
-- 你要继续做 Phase 5
+- 你要继续做 Phase 6
 
 操作方式：
 
-1. 打开 `prompt-14-stamina-system.md`
-2. 全量发送给 AI 助手
-3. 在 Godot 中验证结果
-4. 验证通过后再进入 `prompt-15`
-5. 完成 `prompt-15` 后再进入 `prompt-16`
+1. 打开 `prompt-18-dart-cave-combat-prototype.md`
+2. 对照当前仓库核对是否还有未实现或待打磨项
+3. 在 Godot 中验证战斗原型
+4. 原型稳定后，再继续拆下一阶段的洞窟深化、战斗供应 NPC 或镇子层
 
 ### 回查历史设计
 
@@ -113,6 +111,14 @@
 - 提交成功会扣物品并给奖励
 - 次日刷新逻辑成立
 - 存档读档后订单状态不丢失
+
+### Prompt 18 验证要点
+
+- 玩家能购买并装备飞镖
+- 玩家能进入洞窟并进行俯视即时战斗
+- 飞镖数量与耐久/损耗逻辑成立
+- 战败或撤退能正确返回
+- 洞窟收益能回到主循环
 
 ---
 
@@ -155,10 +161,12 @@
 
 - `docs/phase4-event-effect-system.md`
 - `docs/phase5-farming-economy-system.md`
+- `docs/phase6-combat-cave-prototype.md`
+- `docs/phase6-combat-prototype-implementation.md`
 - `docs/guides/current-to-full-game-roadmap.md`
 
 如果目标是继续推进当前游戏，而不是回顾历史，优先看：
 
 1. `current-to-full-game-roadmap.md`
-2. `phase5-farming-economy-system.md`
-3. `prompt-14` 到 `prompt-16`
+2. `phase6-combat-cave-prototype.md`
+3. `prompt-18`

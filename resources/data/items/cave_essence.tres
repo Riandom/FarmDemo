@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_config.gd" id="1_item_config"]
+
+[resource]
+script = ExtResource("1_item_config")
+item_id = "cave_essence"
+display_name = "洞窟精粹"
+category = "other"
+icon_path = "res://assets/sprites/placeholder/items/crop_eggplant.png"
+base_price = 18
+description = "带着异色光泽的洞窟精粹，是更值钱的探索收益。"

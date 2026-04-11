@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/explore/cave_exit.gd" id="1_script"]
+
+[node name="CaveExit" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Portal" type="Polygon2D" parent="."]
+color = Color(0.36, 0.61, 0.86, 1)
+polygon = PackedVector2Array(-24, -30, 24, -30, 24, 30, -24, 30)

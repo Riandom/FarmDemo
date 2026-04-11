@@ -9,6 +9,7 @@ var _slot_widgets: Array = []
 var _warned_missing_game_manager: bool = false
 
 @onready var slot_container: HBoxContainer = $Panel/HBoxContainer
+@onready var config_manager = get_node_or_null("/root/ConfigManager")
 
 
 func _ready() -> void:
@@ -142,7 +143,17 @@ func _build_textured_stylebox(texture_path: String, margin: int) -> StyleBoxText
 
 
 func _load_item_icon(item_id: String) -> Texture2D:
-	return _safe_load_texture("%s/%s.png" % [_ITEM_ICON_ROOT, item_id])
+	var default_texture := _safe_load_texture("%s/%s.png" % [_ITEM_ICON_ROOT, item_id])
+	if default_texture != null:
+		return default_texture
+
+	if config_manager == null:
+		config_manager = get_node_or_null("/root/ConfigManager")
+	if config_manager != null and config_manager.has_method("get_item_config"):
+		var item_config = config_manager.call("get_item_config", item_id)
+		if item_config != null:
+			return _safe_load_texture(String(item_config.icon_path))
+	return null
 
 
 func _safe_load_texture(texture_path: String) -> Texture2D:
